@@ -132,18 +132,25 @@ export default function SingleQr() {
       const xOffsetIn = pdfOpts.xOffsetMm / 25.4;
       const yOffsetIn = pdfOpts.yOffsetMm / 25.4;
 
-      const labelIndex = pdfStartRow * layout.cols + pdfStartCol;
-      const col = labelIndex % layout.cols;
-      const row = Math.floor(labelIndex / layout.cols);
-
-      const labelX = layout.marginLeft + col * (layout.labelWidth + layout.colGap) + xOffsetIn;
-      const labelY = layout.marginTop + row * (layout.labelHeight + layout.rowGap) + yOffsetIn;
-
       const qrDataUrl = await renderQrToDataUrl(url, pdfOpts, bottomText || undefined);
+      let labelIndex = pdfStartRow * layout.cols + pdfStartCol;
 
-      const qrX = labelX + (layout.labelWidth - pdfOpts.qrSizeInches) / 2;
-      const qrY = labelY + (layout.labelHeight - pdfOpts.qrSizeInches) / 2;
-      doc.addImage(qrDataUrl, "PNG", qrX, qrY, pdfOpts.qrSizeInches, pdfOpts.qrSizeInches);
+      for (let i = 0; i < quantity; i++) {
+        if (labelIndex >= layout.labelsPerPage) {
+          labelIndex = 0;
+          doc.addPage();
+        }
+
+        const col = labelIndex % layout.cols;
+        const row = Math.floor(labelIndex / layout.cols);
+        const labelX = layout.marginLeft + col * (layout.labelWidth + layout.colGap) + xOffsetIn;
+        const labelY = layout.marginTop + row * (layout.labelHeight + layout.rowGap) + yOffsetIn;
+        const qrX = labelX + (layout.labelWidth - pdfOpts.qrSizeInches) / 2;
+        const qrY = labelY + (layout.labelHeight - pdfOpts.qrSizeInches) / 2;
+        doc.addImage(qrDataUrl, "PNG", qrX, qrY, pdfOpts.qrSizeInches, pdfOpts.qrSizeInches);
+
+        labelIndex++;
+      }
 
       const blob = doc.output("blob");
       const a = document.createElement("a");
