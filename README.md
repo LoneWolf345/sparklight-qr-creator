@@ -84,6 +84,12 @@ docker run -p 8080:8080 sparklight-qr
 
 The app will be available at `http://localhost:8080`.
 
+#### OpenShift Notes
+
+- The runtime stage runs as non-root (`USER 1001`) with group `0` ownership, compatible with OpenShift's arbitrary UID assignment.
+- A `HEALTHCHECK` is included using `curl` on port 8080 for liveness/readiness probes.
+- Memory is capped at 384 MB via `NODE_OPTIONS="--max-old-space-size=384"`.
+
 #### Build → Push → Deploy Flow
 
 ```mermaid
