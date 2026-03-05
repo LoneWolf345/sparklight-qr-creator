@@ -169,58 +169,7 @@ export function GlobalSettingsTab() {
         </CardContent>
       </Card>
 
-      {/* QR Rendering */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <QrCode className="h-5 w-5 text-primary" />
-            <CardTitle className="text-lg">QR Rendering</CardTitle>
-          </div>
-          <CardDescription>Error correction, size, and quiet zone settings</CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-3">
-          <div className="space-y-2">
-            <Label>Error Correction</Label>
-            <Select
-              value={settings.qr_error_correction}
-              onValueChange={(v) => updateField("qr_error_correction", v)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="L">L – Low (7%)</SelectItem>
-                <SelectItem value="M">M – Medium (15%)</SelectItem>
-                <SelectItem value="Q">Q – Quartile (25%)</SelectItem>
-                <SelectItem value="H">H – High (30%)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="qr_size">QR Size (inches)</Label>
-            <Input
-              id="qr_size"
-              type="number"
-              step="0.05"
-              min="0.5"
-              max="2"
-              value={settings.qr_size_inches}
-              onChange={(e) => updateField("qr_size_inches", parseFloat(e.target.value) || 1.35)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="quiet_zone">Quiet Zone (modules)</Label>
-            <Input
-              id="quiet_zone"
-              type="number"
-              min="0"
-              max="10"
-              value={settings.quiet_zone_modules}
-              onChange={(e) => updateField("quiet_zone_modules", parseInt(e.target.value) || 4)}
-            />
-          </div>
-        </CardContent>
-      </Card>
+      {/* QR Rendering settings moved to QR Style tab */}
 
       {/* Print Calibration */}
       <Card>

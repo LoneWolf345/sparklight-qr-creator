@@ -1,4 +1,4 @@
-import QRCode from "qrcode";
+import QRCodeStyling from "qr-code-styling";
 import { jsPDF } from "jspdf";
 import type { MappedRecord } from "./batch-types";
 import { AVERY_94107 } from "./batch-types";
@@ -12,12 +12,21 @@ interface PdfOptions {
   quietZone: number;
   xOffsetMm: number;
   yOffsetMm: number;
-  startRow: number; // 0-indexed
-  startCol: number; // 0-indexed
+  startRow: number;
+  startCol: number;
   logoDataUrl?: string;
+  // qr-code-styling options
+  qrDotType?: string;
+  qrDotColor?: string;
+  qrCornerSquareType?: string;
+  qrCornerSquareColor?: string;
+  qrCornerDotType?: string;
+  qrCornerDotColor?: string;
+  qrBackgroundColor?: string;
+  qrImageUrl?: string | null;
+  qrImageSize?: number;
+  qrImageMargin?: number;
 }
-
-const IN_TO_PT = 72;
 
 function hexToRgb(hex: string): [number, number, number] {
   const h = hex.replace("#", "");
@@ -28,6 +37,56 @@ function hexToRgb(hex: string): [number, number, number] {
   ];
 }
 
+async function renderQrToDataUrl(url: string, options: PdfOptions): Promise<string> {
+  const sizePx = Math.round(options.qrSizeInches * 300);
+  
+  const qrOptions: any = {
+    width: sizePx,
+    height: sizePx,
+    data: url,
+    type: "canvas",
+    dotsOptions: {
+      type: options.qrDotType || "square",
+      color: options.qrDotColor || options.primaryColor,
+    },
+    cornersSquareOptions: {
+      type: options.qrCornerSquareType || "square",
+      color: options.qrCornerSquareColor || options.primaryColor,
+    },
+    cornersDotOptions: {
+      type: options.qrCornerDotType || "square",
+      color: options.qrCornerDotColor || options.primaryColor,
+    },
+    backgroundOptions: {
+      color: options.qrBackgroundColor || "#FFFFFF",
+    },
+    qrOptions: {
+      errorCorrectionLevel: options.errorCorrection,
+    },
+    margin: 0,
+  };
+
+  if (options.qrImageUrl) {
+    qrOptions.image = options.qrImageUrl;
+    qrOptions.imageOptions = {
+      crossOrigin: "anonymous",
+      margin: options.qrImageMargin ?? 5,
+      imageSize: options.qrImageSize ?? 0.4,
+    };
+  }
+
+  const qrCode = new QRCodeStyling(qrOptions);
+  const blob = await qrCode.getRawData("png");
+  if (!blob) throw new Error("Failed to render QR code");
+  
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
 export async function generatePdf(
   records: MappedRecord[],
   options: PdfOptions
@@ -36,7 +95,6 @@ export async function generatePdf(
     baseUrl,
     qrSizeInches,
     primaryColor,
-    errorCorrection,
     xOffsetMm,
     yOffsetMm,
     startRow,
@@ -75,14 +133,9 @@ export async function generatePdf(
     const labelX = layout.marginLeft + col * (layout.labelWidth + layout.colGap) + xOffsetIn;
     const labelY = layout.marginTop + row * (layout.labelHeight + layout.rowGap) + yOffsetIn;
 
-    // Generate QR code
+    // Generate QR code using qr-code-styling
     const qrUrl = `${baseUrl}/HH/${record.homesPassedId}`;
-    const qrDataUrl = await QRCode.toDataURL(qrUrl, {
-      errorCorrectionLevel: errorCorrection,
-      margin: 0,
-      width: Math.round(qrSizeInches * 300),
-      color: { dark: primaryColor, light: "#FFFFFF" },
-    });
+    const qrDataUrl = await renderQrToDataUrl(qrUrl, options);
 
     // Center QR within label
     const qrX = labelX + (layout.labelWidth - qrSizeInches) / 2;
@@ -111,7 +164,6 @@ export async function generatePdf(
     doc.setTextColor(40, 40, 40);
     doc.setFontSize(6.5);
 
-    // Address (up to 2 lines, centered)
     const address = record.address;
     const maxTextWidth = layout.labelWidth - 0.16;
     const addressLines = doc.splitTextToSize(address, maxTextWidth) as string[];
@@ -122,13 +174,11 @@ export async function generatePdf(
       doc.text(line, textCenterX, textStartY + idx * 0.1, { align: "center" });
     });
 
-    // HomesPassedID (small, below address)
     const hpIdY = textStartY + displayLines.length * 0.1 + 0.04;
     doc.setFontSize(5);
     doc.setTextColor(120, 120, 120);
     doc.text(`ID: ${record.homesPassedId}`, textCenterX, hpIdY, { align: "center" });
 
-    // "Scan to start" text
     const scanY = hpIdY + 0.09;
     doc.setFontSize(5.5);
     doc.setTextColor(pr, pg, pb);
@@ -145,10 +195,7 @@ export async function generatePreviewCanvas(
   options: PdfOptions,
   canvasWidth: number
 ): Promise<string> {
-  // Generate a single-page PDF and convert first page to data URL
   const previewRecords = records.slice(0, AVERY_94107.labelsPerPage - (options.startRow * AVERY_94107.cols + options.startCol));
   const blob = await generatePdf(previewRecords, options);
-
-  // Return blob URL for iframe preview
   return URL.createObjectURL(blob);
 }
