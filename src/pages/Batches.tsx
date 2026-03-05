@@ -52,12 +52,15 @@ export default function Batches() {
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Rows</TableHead>
-                  <TableHead>Created</TableHead>
-                </TableRow>
+                 <TableRow>
+                   <TableHead>Name</TableHead>
+                   <TableHead>City</TableHead>
+                   <TableHead>State</TableHead>
+                   <TableHead>Market</TableHead>
+                   <TableHead>Status</TableHead>
+                   <TableHead>Rows</TableHead>
+                   <TableHead>Created</TableHead>
+                 </TableRow>
               </TableHeader>
               <TableBody>
                 {batches.map((b) => (
