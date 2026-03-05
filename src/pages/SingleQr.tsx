@@ -32,6 +32,7 @@ export default function SingleQr() {
   const [pdfStartRow, setPdfStartRow] = useState(0);
   const [pdfStartCol, setPdfStartCol] = useState(0);
   const [generating, setGenerating] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     (async () => {
@@ -131,18 +132,25 @@ export default function SingleQr() {
       const xOffsetIn = pdfOpts.xOffsetMm / 25.4;
       const yOffsetIn = pdfOpts.yOffsetMm / 25.4;
 
-      const labelIndex = pdfStartRow * layout.cols + pdfStartCol;
-      const col = labelIndex % layout.cols;
-      const row = Math.floor(labelIndex / layout.cols);
-
-      const labelX = layout.marginLeft + col * (layout.labelWidth + layout.colGap) + xOffsetIn;
-      const labelY = layout.marginTop + row * (layout.labelHeight + layout.rowGap) + yOffsetIn;
-
       const qrDataUrl = await renderQrToDataUrl(url, pdfOpts, bottomText || undefined);
+      let labelIndex = pdfStartRow * layout.cols + pdfStartCol;
 
-      const qrX = labelX + (layout.labelWidth - pdfOpts.qrSizeInches) / 2;
-      const qrY = labelY + (layout.labelHeight - pdfOpts.qrSizeInches) / 2;
-      doc.addImage(qrDataUrl, "PNG", qrX, qrY, pdfOpts.qrSizeInches, pdfOpts.qrSizeInches);
+      for (let i = 0; i < quantity; i++) {
+        if (labelIndex >= layout.labelsPerPage) {
+          labelIndex = 0;
+          doc.addPage();
+        }
+
+        const col = labelIndex % layout.cols;
+        const row = Math.floor(labelIndex / layout.cols);
+        const labelX = layout.marginLeft + col * (layout.labelWidth + layout.colGap) + xOffsetIn;
+        const labelY = layout.marginTop + row * (layout.labelHeight + layout.rowGap) + yOffsetIn;
+        const qrX = labelX + (layout.labelWidth - pdfOpts.qrSizeInches) / 2;
+        const qrY = labelY + (layout.labelHeight - pdfOpts.qrSizeInches) / 2;
+        doc.addImage(qrDataUrl, "PNG", qrX, qrY, pdfOpts.qrSizeInches, pdfOpts.qrSizeInches);
+
+        labelIndex++;
+      }
 
       const blob = doc.output("blob");
       const a = document.createElement("a");
@@ -235,16 +243,21 @@ export default function SingleQr() {
           <DialogHeader>
             <DialogTitle>Select Label Position</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-muted-foreground">Pick the cell on the Avery 94107 sheet where the label should print.</p>
+          <p className="text-sm text-muted-foreground">Pick the starting cell and how many labels to print.</p>
           <LabelStartPicker
             startRow={pdfStartRow}
             startCol={pdfStartCol}
             onSelect={(r, c) => { setPdfStartRow(r); setPdfStartCol(c); }}
           />
+          <div className="space-y-2">
+            <Label>Quantity</Label>
+            <Input type="number" min={1} max={120} value={quantity} onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))} />
+            <p className="text-xs text-muted-foreground">Number of labels to fill (spans multiple pages if needed)</p>
+          </div>
           <DialogFooter>
             <Button onClick={handlePdfGenerate} disabled={generating}>
               {generating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Generate PDF
+              Generate PDF ({quantity} label{quantity !== 1 ? "s" : ""})
             </Button>
           </DialogFooter>
         </DialogContent>
