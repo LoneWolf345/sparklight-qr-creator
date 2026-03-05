@@ -14,16 +14,188 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      app_settings: {
+        Row: {
+          base_url: string
+          created_at: string
+          default_destination_url: string
+          id: string
+          logo_url: string | null
+          primary_color: string
+          qr_error_correction: string
+          qr_size_inches: number
+          quiet_zone_modules: number
+          secondary_color: string
+          updated_at: string
+          x_offset_mm: number
+          y_offset_mm: number
+        }
+        Insert: {
+          base_url?: string
+          created_at?: string
+          default_destination_url?: string
+          id?: string
+          logo_url?: string | null
+          primary_color?: string
+          qr_error_correction?: string
+          qr_size_inches?: number
+          quiet_zone_modules?: number
+          secondary_color?: string
+          updated_at?: string
+          x_offset_mm?: number
+          y_offset_mm?: number
+        }
+        Update: {
+          base_url?: string
+          created_at?: string
+          default_destination_url?: string
+          id?: string
+          logo_url?: string | null
+          primary_color?: string
+          qr_error_correction?: string
+          qr_size_inches?: number
+          quiet_zone_modules?: number
+          secondary_color?: string
+          updated_at?: string
+          x_offset_mm?: number
+          y_offset_mm?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          is_active: boolean
+          updated_at: string
+          user_id: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+          user_id: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+          user_id?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      qr_batches: {
+        Row: {
+          created_at: string
+          created_by: string
+          destination_url_override: string | null
+          id: string
+          name: string
+          row_count: number
+          status: string
+          template: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          destination_url_override?: string | null
+          id?: string
+          name: string
+          row_count?: number
+          status?: string
+          template?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          destination_url_override?: string | null
+          id?: string
+          name?: string
+          row_count?: number
+          status?: string
+          template?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      qr_codes: {
+        Row: {
+          address: string
+          batch_id: string
+          created_at: string
+          homes_passed_id: string
+          id: string
+          status: string
+        }
+        Insert: {
+          address?: string
+          batch_id: string
+          created_at?: string
+          homes_passed_id: string
+          id?: string
+          status?: string
+        }
+        Update: {
+          address?: string
+          batch_id?: string
+          created_at?: string
+          homes_passed_id?: string
+          id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qr_codes_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "qr_batches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "associate"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +322,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "associate"],
+    },
   },
 } as const
