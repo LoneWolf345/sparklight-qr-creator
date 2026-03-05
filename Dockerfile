@@ -35,6 +35,7 @@ ENV HOME=/opt/app-root/home \
     NODE_OPTIONS="--max-old-space-size=384"
 
 COPY --from=builder /opt/app-root/src/dist ./dist
+COPY package.json ./
 COPY vite.config.ts ./
 COPY tsconfig.json ./
 COPY tsconfig.node.json ./
