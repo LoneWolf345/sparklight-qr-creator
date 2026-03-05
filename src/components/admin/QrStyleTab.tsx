@@ -521,7 +521,9 @@ export function QrStyleTab() {
             <CardDescription>Sample QR code with current settings</CardDescription>
           </CardHeader>
           <CardContent className="flex items-center justify-center">
-            <div ref={previewRef} className="w-full max-w-[360px] rounded-lg overflow-hidden border border-border [&>svg]:w-full [&>svg]:h-auto" />
+            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noopener noreferrer">
+              <div ref={previewRef} className="w-full max-w-[360px] rounded-lg overflow-hidden border border-border [&>svg]:w-full [&>svg]:h-auto cursor-pointer" />
+            </a>
           </CardContent>
         </Card>
       </div>
