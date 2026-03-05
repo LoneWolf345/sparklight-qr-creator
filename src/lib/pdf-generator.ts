@@ -27,6 +27,21 @@ interface PdfOptions {
   qrImageUrl?: string | null;
   qrImageSize?: number;
   qrImageMargin?: number;
+  // border plugin options
+  qrBorderEnabled?: boolean;
+  qrBorderRound?: number;
+  qrBorderThickness?: number;
+  qrBorderColor?: string;
+  qrBorderDasharray?: string | null;
+  qrBorderInnerThickness?: number;
+  qrBorderInnerColor?: string;
+  qrBorderOuterThickness?: number;
+  qrBorderOuterColor?: string;
+  qrBorderTopText?: string | null;
+  qrBorderTopStyle?: string;
+  qrBorderBottomText?: string | null;
+  qrBorderBottomStyle?: string;
+  qrBorderLicenseKey?: string | null;
 }
 
 function hexToRgb(hex: string): [number, number, number] {
