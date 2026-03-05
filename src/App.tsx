@@ -10,6 +10,7 @@ import Batches from "@/pages/Batches";
 import BatchNew from "@/pages/BatchNew";
 import BatchDetail from "@/pages/BatchDetail";
 import Admin from "@/pages/Admin";
+import SingleQr from "@/pages/SingleQr";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
