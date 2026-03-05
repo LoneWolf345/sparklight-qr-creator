@@ -28,6 +28,9 @@ interface Batch {
   created_at: string;
   created_by: string;
   destination_url_override: string | null;
+  city: string | null;
+  state: string | null;
+  market: string | null;
 }
 
 export default function BatchDetail() {
