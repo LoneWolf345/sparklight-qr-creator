@@ -285,7 +285,123 @@ export async function generatePreviewCanvas(
   options: PdfOptions,
   canvasWidth: number
 ): Promise<string> {
-  const previewRecords = records.slice(0, AVERY_94107.labelsPerPage - (options.startRow * AVERY_94107.cols + options.startCol));
-  const blob = await generatePdf(previewRecords, options);
-  return URL.createObjectURL(blob);
+  const layout = AVERY_94107;
+  const startIndex = options.startRow * layout.cols + options.startCol;
+  const previewRecords = records.slice(0, layout.labelsPerPage - startIndex);
+
+  const canvas = document.createElement("canvas");
+  const pageWidthPx = Math.max(400, Math.round(canvasWidth));
+  const pxPerIn = pageWidthPx / layout.pageWidth;
+  const pageHeightPx = Math.round(layout.pageHeight * pxPerIn);
+
+  canvas.width = pageWidthPx;
+  canvas.height = pageHeightPx;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Failed to create preview canvas context");
+
+  ctx.fillStyle = "#FFFFFF";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const xOffsetIn = options.xOffsetMm / 25.4;
+  const yOffsetIn = options.yOffsetMm / 25.4;
+  let labelIndex = startIndex;
+
+  for (let i = 0; i < previewRecords.length && labelIndex < layout.labelsPerPage; i++) {
+    const record = previewRecords[i];
+    const col = labelIndex % layout.cols;
+    const row = Math.floor(labelIndex / layout.cols);
+
+    const labelXIn = layout.marginLeft + col * (layout.labelWidth + layout.colGap) + xOffsetIn;
+    const labelYIn = layout.marginTop + row * (layout.labelHeight + layout.rowGap) + yOffsetIn;
+
+    const qrUrl = `${options.baseUrl}/HH/${record.homesPassedId}`;
+    const qrDataUrl = await renderQrToDataUrl(qrUrl, options);
+
+    const qrXIn = labelXIn + (layout.labelWidth - options.qrSizeInches) / 2;
+    const qrYIn = labelYIn + 0.12;
+
+    const qrImg = new Image();
+    qrImg.src = qrDataUrl;
+    await new Promise<void>((resolve, reject) => {
+      qrImg.onload = () => resolve();
+      qrImg.onerror = () => reject(new Error("Failed to load generated QR image"));
+    });
+
+    ctx.drawImage(
+      qrImg,
+      Math.round(qrXIn * pxPerIn),
+      Math.round(qrYIn * pxPerIn),
+      Math.round(options.qrSizeInches * pxPerIn),
+      Math.round(options.qrSizeInches * pxPerIn)
+    );
+
+    if (options.logoDataUrl) {
+      const logoWidthIn = 0.9;
+      const logoHeightIn = 0.18;
+      const logoXIn = labelXIn + (layout.labelWidth - logoWidthIn) / 2;
+      const logoYIn = qrYIn - logoHeightIn - 0.02;
+
+      try {
+        const logoImg = new Image();
+        logoImg.src = options.logoDataUrl;
+        await new Promise<void>((resolve, reject) => {
+          logoImg.onload = () => resolve();
+          logoImg.onerror = () => reject(new Error("Failed to load logo image"));
+        });
+        ctx.drawImage(
+          logoImg,
+          Math.round(logoXIn * pxPerIn),
+          Math.round(logoYIn * pxPerIn),
+          Math.round(logoWidthIn * pxPerIn),
+          Math.round(logoHeightIn * pxPerIn)
+        );
+      } catch {
+        // skip invalid logo in preview
+      }
+    }
+
+    const textCenterXPx = Math.round((labelXIn + layout.labelWidth / 2) * pxPerIn);
+    const textStartYPx = Math.round((qrYIn + options.qrSizeInches + 0.08) * pxPerIn);
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
+
+    ctx.fillStyle = "#282828";
+    ctx.font = `${Math.max(8, Math.round(6.5 * pxPerIn / 10))}px sans-serif`;
+
+    const maxTextWidthPx = Math.round((layout.labelWidth - 0.16) * pxPerIn);
+    const words = (record.address || "").split(/\s+/).filter(Boolean);
+    const lines: string[] = [];
+    let currentLine = "";
+
+    for (const word of words) {
+      const testLine = currentLine ? `${currentLine} ${word}` : word;
+      if (ctx.measureText(testLine).width <= maxTextWidthPx || !currentLine) {
+        currentLine = testLine;
+      } else {
+        lines.push(currentLine);
+        currentLine = word;
+      }
+      if (lines.length === 2) break;
+    }
+    if (lines.length < 2 && currentLine) lines.push(currentLine);
+
+    lines.slice(0, 2).forEach((line, lineIdx) => {
+      ctx.fillText(line, textCenterXPx, textStartYPx + lineIdx * Math.round(0.1 * pxPerIn));
+    });
+
+    ctx.fillStyle = "#787878";
+    ctx.font = `${Math.max(7, Math.round(5 * pxPerIn / 10))}px sans-serif`;
+    const hpIdYPx = textStartYPx + lines.slice(0, 2).length * Math.round(0.1 * pxPerIn) + Math.round(0.04 * pxPerIn);
+    ctx.fillText(`ID: ${record.homesPassedId}`, textCenterXPx, hpIdYPx);
+
+    ctx.fillStyle = options.primaryColor;
+    ctx.font = `${Math.max(7, Math.round(5.5 * pxPerIn / 10))}px sans-serif`;
+    ctx.fillText("Scan to get started", textCenterXPx, hpIdYPx + Math.round(0.09 * pxPerIn));
+
+    labelIndex++;
+  }
+
+  return canvas.toDataURL("image/png");
 }

@@ -168,11 +168,12 @@ export function ReviewStep({
               <span className="ml-3 text-sm text-muted-foreground">Generating preview…</span>
             </div>
           ) : previewUrl ? (
-            <iframe
+            <img
               src={previewUrl}
               className="w-full border border-border rounded-lg"
-              style={{ height: "600px" }}
-              title="Label Preview"
+              style={{ height: "600px", objectFit: "contain", background: "hsl(var(--background))" }}
+              alt="Label preview of the first page"
+              loading="lazy"
             />
           ) : (
             <div className="text-center py-8 space-y-2">
