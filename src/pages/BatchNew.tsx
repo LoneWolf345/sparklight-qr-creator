@@ -164,10 +164,13 @@ export default function BatchNew() {
   const handleNextStep = () => {
     if (step === 0) {
       if (!batchName.trim()) {
-        setFileError("Please enter a batch name.");
+        setFileError("Please enter a community name.");
         return;
       }
-      if (!file || rawData.length === 0) {
+      if (!city.trim() || !state.trim() || !market.trim()) {
+        setFileError("City, State, and Market are required.");
+        return;
+      }
         setFileError("Please upload a file first.");
         return;
       }
