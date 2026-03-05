@@ -88,7 +88,7 @@ async function renderQrToDataUrl(
       errorCorrectionLevel: options.errorCorrection,
     },
     // Add margin when border is enabled so the frame doesn't overlap QR modules
-    margin: options.qrBorderEnabled ? 40 : 0,
+    margin: options.qrBorderEnabled ? Math.round(40 * (sizePx / 360)) : 0,
   };
 
   if (options.qrImageUrl) {
