@@ -397,7 +397,7 @@ export default function BatchNew() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              {generating ? "Generating…" : "Batch Complete"}
+              {generating ? "Generating…" : "Community Complete"}
             </CardTitle>
             <CardDescription>
               {generating
