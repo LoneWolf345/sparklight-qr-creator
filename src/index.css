@@ -138,7 +138,16 @@
   }
 }
 
-/* Hide qr-border-plugin trial watermark globally */
+/* Reposition qr-border-plugin trial watermark to be unobtrusive */
 .qr-border-plugin-trial {
-  display: none !important;
+  position: fixed !important;
+  bottom: 4px !important;
+  right: 4px !important;
+  top: auto !important;
+  left: auto !important;
+  font-size: 9px !important;
+  opacity: 0.3 !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+  color: hsl(var(--muted-foreground)) !important;
 }
