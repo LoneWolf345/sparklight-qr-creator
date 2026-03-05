@@ -4,17 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, CheckCircle, FileText } from "lucide-react";
 import type { MappedRecord, ValidationWarning } from "@/lib/batch-types";
 import { generatePreviewCanvas } from "@/lib/pdf-generator";
+import type { QrSettings } from "@/lib/pdf-options";
+import { buildPdfOptions } from "@/lib/pdf-options";
 
 interface ReviewStepProps {
   records: MappedRecord[];
   warnings: ValidationWarning[];
-  baseUrl: string;
-  qrSizeInches: number;
-  primaryColor: string;
-  errorCorrection: string;
-  quietZone: number;
-  xOffsetMm: number;
-  yOffsetMm: number;
+  qrSettings: QrSettings;
   startRow: number;
   startCol: number;
   logoDataUrl?: string;
@@ -23,13 +19,7 @@ interface ReviewStepProps {
 export function ReviewStep({
   records,
   warnings,
-  baseUrl,
-  qrSizeInches,
-  primaryColor,
-  errorCorrection,
-  quietZone,
-  xOffsetMm,
-  yOffsetMm,
+  qrSettings,
   startRow,
   startCol,
   logoDataUrl,
@@ -49,19 +39,8 @@ export function ReviewStep({
       setLoadingPreview(true);
       setPreviewError(null);
       try {
-        const url = await generatePreviewCanvas(validRecords, {
-          baseUrl,
-          qrSizeInches,
-          primaryColor,
-          secondaryColor: "#54585A",
-          errorCorrection: errorCorrection as "L" | "M" | "Q" | "H",
-          quietZone,
-          xOffsetMm,
-          yOffsetMm,
-          startRow,
-          startCol,
-          logoDataUrl,
-        }, 600);
+        const pdfOptions = buildPdfOptions(qrSettings, startRow, startCol, logoDataUrl);
+        const url = await generatePreviewCanvas(validRecords, pdfOptions, 600);
         if (!cancelled) setPreviewUrl(url);
       } catch (err) {
         console.error("Preview generation failed:", err);
@@ -79,19 +58,7 @@ export function ReviewStep({
     }
 
     return () => { cancelled = true; };
-  }, [
-    validRecords,
-    baseUrl,
-    qrSizeInches,
-    primaryColor,
-    errorCorrection,
-    quietZone,
-    xOffsetMm,
-    yOffsetMm,
-    startRow,
-    startCol,
-    logoDataUrl,
-  ]);
+  }, [validRecords, qrSettings, startRow, startCol, logoDataUrl]);
 
   return (
     <div className="space-y-6">
