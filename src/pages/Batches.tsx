@@ -27,10 +27,10 @@ export default function Batches() {
   return (
     <AppLayout>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-foreground">QR Batches</h1>
+        <h1 className="text-2xl font-bold text-foreground">Communities</h1>
         <Button asChild>
           <Link to="/batches/new">
-            <Plus className="mr-2 h-4 w-4" /> New Batch
+            <Plus className="mr-2 h-4 w-4" /> New Community
           </Link>
         </Button>
       </div>
