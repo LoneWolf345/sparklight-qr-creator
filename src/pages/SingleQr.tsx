@@ -96,7 +96,7 @@ export default function SingleQr() {
   const handleDownload = async (type: "png" | "svg") => {
     if (!qrRef.current) return;
     try {
-      await qrRef.current.download({ type, name: "qr-code" });
+      await qrRef.current.download({ extension: type, name: "qr-code" } as any);
     } catch {
       toast.error("Download failed");
     }
