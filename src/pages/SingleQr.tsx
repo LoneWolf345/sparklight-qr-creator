@@ -193,9 +193,23 @@ export default function SingleQr() {
             <CardTitle className="text-lg">QR Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>URL *</Label>
-              <Input placeholder="https://example.com" value={url} onChange={(e) => setUrl(e.target.value)} />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label>URL *</Label>
+                <Input placeholder="https://example.com" value={url} onChange={(e) => setUrl(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Error Correction</Label>
+                <Select value={errorCorrection} onValueChange={setErrorCorrection}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="L">L – Low (7%)</SelectItem>
+                    <SelectItem value="M">M – Medium (15%)</SelectItem>
+                    <SelectItem value="Q">Q – Quartile (25%)</SelectItem>
+                    <SelectItem value="H">H – High (30%)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             {settings?.qr_border_enabled && (
               <div className="grid gap-4 sm:grid-cols-2">
