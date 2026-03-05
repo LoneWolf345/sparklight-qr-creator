@@ -66,16 +66,19 @@ export default function Batches() {
                 {batches.map((b) => (
                   <TableRow key={b.id}>
                     <TableCell>
-                      <Link to={`/batches/${b.id}`} className="text-primary hover:underline font-medium">
-                        {b.name}
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={b.status === "completed" ? "default" : "secondary"}>
-                        {b.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{b.row_count}</TableCell>
+                       <Link to={`/batches/${b.id}`} className="text-primary hover:underline font-medium">
+                         {b.name}
+                       </Link>
+                     </TableCell>
+                     <TableCell className="text-sm">{b.city || "—"}</TableCell>
+                     <TableCell className="text-sm">{b.state || "—"}</TableCell>
+                     <TableCell className="text-sm">{b.market || "—"}</TableCell>
+                     <TableCell>
+                       <Badge variant={b.status === "completed" ? "default" : "secondary"}>
+                         {b.status}
+                       </Badge>
+                     </TableCell>
+                     <TableCell>{b.row_count}</TableCell>
                     <TableCell className="text-muted-foreground text-sm">
                       {format(new Date(b.created_at), "MMM d, yyyy h:mm a")}
                     </TableCell>

@@ -1,17 +1,29 @@
 import { useCallback, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Upload, FileSpreadsheet, AlertCircle } from "lucide-react";
 
 interface FileUploadStepProps {
   batchName: string;
   onBatchNameChange: (name: string) => void;
+  city: string;
+  onCityChange: (city: string) => void;
+  state: string;
+  onStateChange: (state: string) => void;
+  market: string;
+  onMarketChange: (market: string) => void;
   onFileLoaded: (file: File) => void;
   error: string | null;
 }
 
-export function FileUploadStep({ batchName, onBatchNameChange, onFileLoaded, error }: FileUploadStepProps) {
+export function FileUploadStep({
+  batchName, onBatchNameChange,
+  city, onCityChange,
+  state, onStateChange,
+  market, onMarketChange,
+  onFileLoaded, error,
+}: FileUploadStepProps) {
   const [dragOver, setDragOver] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
 
@@ -30,7 +42,7 @@ export function FileUploadStep({ batchName, onBatchNameChange, onFileLoaded, err
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="batch-name">Batch Name</Label>
+        <Label htmlFor="batch-name">Community Name</Label>
         <Input
           id="batch-name"
           value={batchName}
@@ -38,6 +50,36 @@ export function FileUploadStep({ batchName, onBatchNameChange, onFileLoaded, err
           placeholder="e.g., March 2026 Campaign – Phoenix"
           className="max-w-md"
         />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="city">City <span className="text-destructive">*</span></Label>
+          <Input
+            id="city"
+            value={city}
+            onChange={(e) => onCityChange(e.target.value)}
+            placeholder="e.g., Phoenix"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="state">State <span className="text-destructive">*</span></Label>
+          <Input
+            id="state"
+            value={state}
+            onChange={(e) => onStateChange(e.target.value)}
+            placeholder="e.g., AZ"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="market">Market <span className="text-destructive">*</span></Label>
+          <Input
+            id="market"
+            value={market}
+            onChange={(e) => onMarketChange(e.target.value)}
+            placeholder="e.g., Southwest"
+          />
+        </div>
       </div>
 
       <Card
