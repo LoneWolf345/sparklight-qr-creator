@@ -32,6 +32,7 @@ export default function SingleQr() {
   const [pdfStartRow, setPdfStartRow] = useState(0);
   const [pdfStartCol, setPdfStartCol] = useState(0);
   const [generating, setGenerating] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     (async () => {
