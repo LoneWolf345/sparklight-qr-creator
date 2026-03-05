@@ -3,7 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GlobalSettingsTab } from "@/components/admin/GlobalSettingsTab";
 import { UserManagementTab } from "@/components/admin/UserManagementTab";
 import { AuditLogTab } from "@/components/admin/AuditLogTab";
-import { Settings, Users, FileText } from "lucide-react";
+import { ScanLogTab } from "@/components/admin/ScanLogTab";
+import { Settings, Users, FileText, Activity } from "lucide-react";
 
 export default function Admin() {
   return (
@@ -20,6 +21,9 @@ export default function Admin() {
           <TabsTrigger value="audit" className="gap-2">
             <FileText className="h-4 w-4" /> Audit Log
           </TabsTrigger>
+          <TabsTrigger value="scans" className="gap-2">
+            <Activity className="h-4 w-4" /> Scan Log
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="settings">
           <GlobalSettingsTab />
@@ -29,6 +33,9 @@ export default function Admin() {
         </TabsContent>
         <TabsContent value="audit">
           <AuditLogTab />
+        </TabsContent>
+        <TabsContent value="scans">
+          <ScanLogTab />
         </TabsContent>
       </Tabs>
     </AppLayout>
