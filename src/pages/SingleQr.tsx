@@ -95,7 +95,7 @@ export default function SingleQr() {
 
     qr.append(previewRef.current);
     qrRef.current = qr;
-  }, [settings, url, topText, bottomText, initDone]);
+  }, [settings, url, topText, bottomText, errorCorrection, initDone]);
 
   const handleDownload = async (type: "png" | "svg") => {
     if (!qrRef.current) return;
