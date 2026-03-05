@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -8,8 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Download, Search } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { ArrowLeft, Download, Search, Trash2 } from "lucide-react";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 interface QrCode {
   id: string;
@@ -34,6 +36,7 @@ interface Batch {
 }
 
 export default function BatchDetail() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { role } = useAuth();
   const [batch, setBatch] = useState<Batch | null>(null);
@@ -158,11 +161,44 @@ export default function BatchDetail() {
         </Card>
       </div>
 
-      {/* Actions */}
       <div className="flex flex-wrap gap-3 mb-6">
         <Button variant="outline" onClick={handleDownloadCsv}>
           <Download className="mr-2 h-4 w-4" /> Export CSV
         </Button>
+        {role === "admin" && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" className="text-destructive border-destructive/50 hover:bg-destructive/10">
+                <Trash2 className="mr-2 h-4 w-4" /> Delete Community
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete "{batch.name}"?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete the community and all its QR codes. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  onClick={async () => {
+                    const { error } = await supabase.from("qr_batches").delete().eq("id", batch.id);
+                    if (error) {
+                      toast.error("Failed to delete: " + error.message);
+                    } else {
+                      toast.success(`"${batch.name}" deleted`);
+                      navigate("/batches");
+                    }
+                  }}
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
       </div>
 
       {/* Codes Table */}
