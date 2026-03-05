@@ -149,6 +149,25 @@ export function QrStyleTab() {
     setSettings({ ...settings, [field]: value });
   };
 
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const ext = file.name.split('.').pop();
+    const path = `logo-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from('qr-logos').upload(path, file, { upsert: true });
+    if (error) {
+      toast.error("Upload failed: " + error.message);
+      setUploading(false);
+      return;
+    }
+    const { data: urlData } = supabase.storage.from('qr-logos').getPublicUrl(path);
+    update("qr_image_url", urlData.publicUrl);
+    setUploading(false);
+    toast.success("Logo uploaded");
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   if (loading) return <p className="text-muted-foreground text-sm">Loading…</p>;
   if (!settings) return <p className="text-destructive text-sm">Failed to load settings.</p>;
 
