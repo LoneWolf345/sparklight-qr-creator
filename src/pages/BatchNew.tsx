@@ -205,6 +205,9 @@ export default function BatchNew() {
           row_count: validRecords.length,
           status: "generating",
           destination_url_override: destinationOverride || null,
+          city: city.trim(),
+          state: state.trim(),
+          market: market.trim(),
         })
         .select()
         .single();
