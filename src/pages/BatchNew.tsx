@@ -65,6 +65,20 @@ export default function BatchNew() {
     qr_image_url: null,
     qr_image_size: 0.4,
     qr_image_margin: 5,
+    qr_border_enabled: false,
+    qr_border_round: 0,
+    qr_border_thickness: 40,
+    qr_border_color: "#000000",
+    qr_border_dasharray: null,
+    qr_border_inner_thickness: 5,
+    qr_border_inner_color: "#000000",
+    qr_border_outer_thickness: 5,
+    qr_border_outer_color: "#000000",
+    qr_border_top_text: null,
+    qr_border_top_style: "font: 20px sans-serif; fill: #FFFFFF;",
+    qr_border_bottom_text: null,
+    qr_border_bottom_style: "font: 20px sans-serif; fill: #FFFFFF;",
+    qr_border_license_key: null,
   });
 
   // Logo data URL
@@ -97,6 +111,20 @@ export default function BatchNew() {
             qr_image_url: (data as any).qr_image_url || null,
             qr_image_size: Number((data as any).qr_image_size) || 0.4,
             qr_image_margin: Number((data as any).qr_image_margin) || 5,
+            qr_border_enabled: (data as any).qr_border_enabled ?? false,
+            qr_border_round: Number((data as any).qr_border_round) || 0,
+            qr_border_thickness: Number((data as any).qr_border_thickness) || 40,
+            qr_border_color: (data as any).qr_border_color || "#000000",
+            qr_border_dasharray: (data as any).qr_border_dasharray || null,
+            qr_border_inner_thickness: Number((data as any).qr_border_inner_thickness) || 5,
+            qr_border_inner_color: (data as any).qr_border_inner_color || "#000000",
+            qr_border_outer_thickness: Number((data as any).qr_border_outer_thickness) || 5,
+            qr_border_outer_color: (data as any).qr_border_outer_color || "#000000",
+            qr_border_top_text: (data as any).qr_border_top_text || null,
+            qr_border_top_style: (data as any).qr_border_top_style || "font: 20px sans-serif; fill: #FFFFFF;",
+            qr_border_bottom_text: (data as any).qr_border_bottom_text || null,
+            qr_border_bottom_style: (data as any).qr_border_bottom_style || "font: 20px sans-serif; fill: #FFFFFF;",
+            qr_border_license_key: (data as any).qr_border_license_key || null,
           });
         }
       });
@@ -215,6 +243,20 @@ export default function BatchNew() {
         qrImageUrl: settings.qr_image_url,
         qrImageSize: settings.qr_image_size,
         qrImageMargin: settings.qr_image_margin,
+        qrBorderEnabled: settings.qr_border_enabled,
+        qrBorderRound: settings.qr_border_round,
+        qrBorderThickness: settings.qr_border_thickness,
+        qrBorderColor: settings.qr_border_color,
+        qrBorderDasharray: settings.qr_border_dasharray,
+        qrBorderInnerThickness: settings.qr_border_inner_thickness,
+        qrBorderInnerColor: settings.qr_border_inner_color,
+        qrBorderOuterThickness: settings.qr_border_outer_thickness,
+        qrBorderOuterColor: settings.qr_border_outer_color,
+        qrBorderTopText: settings.qr_border_top_text,
+        qrBorderTopStyle: settings.qr_border_top_style,
+        qrBorderBottomText: settings.qr_border_bottom_text,
+        qrBorderBottomStyle: settings.qr_border_bottom_style,
+        qrBorderLicenseKey: settings.qr_border_license_key,
       });
       setPdfBlob(blob);
 
