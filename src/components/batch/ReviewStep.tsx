@@ -38,7 +38,7 @@ export function ReviewStep({
   const [loadingPreview, setLoadingPreview] = useState(true);
   const [previewError, setPreviewError] = useState<string | null>(null);
 
-  const validRecords = records.filter((r) => r.homesPassedId);
+  const validRecords = useMemo(() => records.filter((r) => r.homesPassedId), [records]);
   const errorWarnings = warnings.filter((w) => w.type === "missing_id");
   const otherWarnings = warnings.filter((w) => w.type !== "missing_id");
 
