@@ -137,3 +137,8 @@
     font-family: 'Inter', sans-serif;
   }
 }
+
+/* Hide qr-border-plugin trial watermark globally */
+.qr-border-plugin-trial {
+  display: none !important;
+}
