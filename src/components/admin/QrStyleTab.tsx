@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
-import { Save, QrCode, Image, Paintbrush } from "lucide-react";
+import { Save, QrCode, Image, Paintbrush, Upload, X } from "lucide-react";
 import QRCodeStyling from "qr-code-styling";
 
 const DOT_TYPES = [
