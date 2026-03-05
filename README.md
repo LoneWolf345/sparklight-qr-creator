@@ -64,6 +64,43 @@ This project is built with:
 
 Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
 
+### Docker / OpenShift Deployment
+
+This project includes a multi-stage `Dockerfile` that builds the app and serves it with `vite preview` on port 8080.
+
+#### Build & Run Locally
+
+```sh
+# Build the image (pass your env vars as build args)
+docker build \
+  --build-arg VITE_SUPABASE_PROJECT_ID="your-project-id" \
+  --build-arg VITE_SUPABASE_PUBLISHABLE_KEY="your-anon-key" \
+  --build-arg VITE_SUPABASE_URL="https://your-project-id.supabase.co" \
+  -t sparklight-qr .
+
+# Run the container
+docker run -p 8080:8080 sparklight-qr
+```
+
+The app will be available at `http://localhost:8080`.
+
+#### Build → Push → Deploy Flow
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant Docker as Docker Build
+    participant Reg as Container Registry
+    participant OCP as OpenShift
+
+    Dev->>Docker: docker build --build-arg VITE_*
+    Docker->>Docker: npm ci && npm run build
+    Docker->>Reg: docker push
+    Reg->>OCP: oc new-app / oc apply
+    OCP->>OCP: Deploy pod (vite preview :8080)
+    OCP-->>Dev: Route exposes app
+```
+
 ## Can I connect a custom domain to my Lovable project?
 
 Yes, you can!
