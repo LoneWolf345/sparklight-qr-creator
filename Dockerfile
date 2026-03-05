@@ -64,4 +64,4 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD curl -f http://localhost:8080/ || exit 1
 
-CMD ["npm", "run", "preview", "--", "--host", "--port", "8080"]
+CMD ["npx", "vite", "preview", "--host", "--port", "8080"]
