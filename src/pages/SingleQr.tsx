@@ -129,6 +129,7 @@ export default function SingleQr() {
       // Override top/bottom text with user input
       pdfOpts.qrBorderTopText = topText || null;
       pdfOpts.qrBorderBottomText = bottomText || null;
+      pdfOpts.errorCorrection = errorCorrection as "L" | "M" | "Q" | "H";
 
       const layout = AVERY_94107;
       const doc = new jsPDF({ unit: "in", format: "letter" });
