@@ -195,6 +195,16 @@ export default function BatchNew() {
         startRow,
         startCol,
         logoDataUrl,
+        qrDotType: settings.qr_dot_type,
+        qrDotColor: settings.qr_dot_color,
+        qrCornerSquareType: settings.qr_corner_square_type,
+        qrCornerSquareColor: settings.qr_corner_square_color,
+        qrCornerDotType: settings.qr_corner_dot_type,
+        qrCornerDotColor: settings.qr_corner_dot_color,
+        qrBackgroundColor: settings.qr_background_color,
+        qrImageUrl: settings.qr_image_url,
+        qrImageSize: settings.qr_image_size,
+        qrImageMargin: settings.qr_image_margin,
       });
       setPdfBlob(blob);
 
