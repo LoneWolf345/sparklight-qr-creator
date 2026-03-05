@@ -65,6 +65,20 @@ export default function BatchNew() {
     qr_image_url: null,
     qr_image_size: 0.4,
     qr_image_margin: 5,
+    qr_border_enabled: false,
+    qr_border_round: 0,
+    qr_border_thickness: 40,
+    qr_border_color: "#000000",
+    qr_border_dasharray: null,
+    qr_border_inner_thickness: 5,
+    qr_border_inner_color: "#000000",
+    qr_border_outer_thickness: 5,
+    qr_border_outer_color: "#000000",
+    qr_border_top_text: null,
+    qr_border_top_style: "font: 20px sans-serif; fill: #FFFFFF;",
+    qr_border_bottom_text: null,
+    qr_border_bottom_style: "font: 20px sans-serif; fill: #FFFFFF;",
+    qr_border_license_key: null,
   });
 
   // Logo data URL
