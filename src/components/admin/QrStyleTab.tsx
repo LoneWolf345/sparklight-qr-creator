@@ -104,7 +104,7 @@ export function QrStyleTab() {
       width: 360,
       height: 360,
       type: "svg",
-      data: "https://example.com/HH/SAMPLE123",
+      data: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       dotsOptions: {
         type: settings.qr_dot_type,
         color: settings.qr_dot_color,
