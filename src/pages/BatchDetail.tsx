@@ -36,6 +36,7 @@ interface Batch {
 }
 
 export default function BatchDetail() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { role } = useAuth();
   const [batch, setBatch] = useState<Batch | null>(null);
