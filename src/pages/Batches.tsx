@@ -44,9 +44,9 @@ export default function Batches() {
             <p className="text-muted-foreground text-sm">Loading…</p>
           ) : batches.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-muted-foreground mb-4">No batches yet. Create your first batch to get started.</p>
+              <p className="text-muted-foreground mb-4">No communities yet. Create your first community to get started.</p>
               <Button asChild variant="outline">
-                <Link to="/batches/new">Create Batch</Link>
+                <Link to="/batches/new">Create Community</Link>
               </Button>
             </div>
           ) : (
