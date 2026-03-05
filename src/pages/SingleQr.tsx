@@ -65,7 +65,7 @@ export default function SingleQr() {
       cornersSquareOptions: { type: settings.qr_corner_square_type, color: settings.qr_corner_square_color },
       cornersDotOptions: { type: settings.qr_corner_dot_type, color: settings.qr_corner_dot_color },
       backgroundOptions: { color: settings.qr_background_color },
-      qrOptions: { errorCorrectionLevel: settings.qr_error_correction },
+      qrOptions: { errorCorrectionLevel: errorCorrection },
       margin: settings.qr_border_enabled ? 40 : settings.quiet_zone_modules,
     };
 
