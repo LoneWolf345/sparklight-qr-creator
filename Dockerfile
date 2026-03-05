@@ -34,9 +34,6 @@ ENV HOME=/opt/app-root/home \
     NPM_CONFIG_CACHE=/opt/app-root/home/.npm \
     NODE_OPTIONS="--max-old-space-size=384"
 
-COPY package*.json ./
-RUN npm ci --omit=dev --no-cache
-
 COPY --from=builder /opt/app-root/src/dist ./dist
 COPY vite.config.ts ./
 COPY tsconfig.json ./
