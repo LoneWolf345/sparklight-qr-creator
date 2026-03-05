@@ -28,6 +28,8 @@ export default function BatchNew() {
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [market, setMarket] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
   const [headers, setHeaders] = useState<string[]>([]);
   const [rawData, setRawData] = useState<ParsedRow[]>([]);
 
