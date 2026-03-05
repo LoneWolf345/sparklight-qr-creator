@@ -419,9 +419,9 @@ export default function BatchNew() {
                 <Button variant="outline" onClick={handleDownloadCsv}>
                   <Download className="mr-2 h-4 w-4" /> Download CSV Mapping
                 </Button>
-                {batchId && (
-                  <Button variant="outline" onClick={() => navigate(`/batches/${batchId}`)}>
-                    View Batch Details
+                 {batchId && (
+                   <Button variant="outline" onClick={() => navigate(`/batches/${batchId}`)}>
+                     View Community Details
                   </Button>
                 )}
               </div>
