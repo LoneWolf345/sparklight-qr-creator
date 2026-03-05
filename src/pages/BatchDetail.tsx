@@ -4,14 +4,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { ArrowLeft, Download, Search, Trash2 } from "lucide-react";
+import { ArrowLeft, Download, Search, Trash2, Printer } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import { ReprintDialog } from "@/components/batch/ReprintDialog";
 
 interface QrCode {
   id: string;
@@ -45,6 +47,13 @@ export default function BatchDetail() {
   const [search, setSearch] = useState("");
   const [settings, setSettings] = useState({ base_url: "" });
 
+  // Selection state
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  // Reprint dialog state
+  const [reprintOpen, setReprintOpen] = useState(false);
+  const [reprintCodes, setReprintCodes] = useState<QrCode[]>([]);
+
   useEffect(() => {
     if (!id) return;
     Promise.all([
@@ -59,11 +68,45 @@ export default function BatchDetail() {
     });
   }, [id]);
 
+  const activeCodes = codes.filter((c) => c.status === "active");
+
   const filteredCodes = codes.filter(
     (c) =>
       c.homes_passed_id.toLowerCase().includes(search.toLowerCase()) ||
       c.address.toLowerCase().includes(search.toLowerCase())
   );
+
+  const allFilteredSelected = filteredCodes.length > 0 && filteredCodes.every((c) => selectedIds.has(c.id));
+
+  const toggleSelectAll = () => {
+    if (allFilteredSelected) {
+      const next = new Set(selectedIds);
+      filteredCodes.forEach((c) => next.delete(c.id));
+      setSelectedIds(next);
+    } else {
+      const next = new Set(selectedIds);
+      filteredCodes.forEach((c) => next.add(c.id));
+      setSelectedIds(next);
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    const next = new Set(selectedIds);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setSelectedIds(next);
+  };
+
+  const handleReprintAll = () => {
+    setReprintCodes(activeCodes);
+    setReprintOpen(true);
+  };
+
+  const handleReprintSelected = () => {
+    const selected = codes.filter((c) => selectedIds.has(c.id));
+    setReprintCodes(selected);
+    setReprintOpen(true);
+  };
 
   const handleDownloadCsv = () => {
     if (!batch) return;
@@ -155,7 +198,7 @@ export default function BatchDetail() {
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground">Active</p>
             <p className="font-medium text-foreground mt-1">
-              {codes.filter((c) => c.status === "active").length}
+              {activeCodes.length}
             </p>
           </CardContent>
         </Card>
@@ -164,6 +207,16 @@ export default function BatchDetail() {
       <div className="flex flex-wrap gap-3 mb-6">
         <Button variant="outline" onClick={handleDownloadCsv}>
           <Download className="mr-2 h-4 w-4" /> Export CSV
+        </Button>
+        <Button onClick={handleReprintAll} disabled={activeCodes.length === 0}>
+          <Printer className="mr-2 h-4 w-4" /> Reprint All
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={handleReprintSelected}
+          disabled={selectedIds.size === 0}
+        >
+          <Printer className="mr-2 h-4 w-4" /> Reprint Selected ({selectedIds.size})
         </Button>
         {role === "admin" && (
           <AlertDialog>
@@ -222,6 +275,13 @@ export default function BatchDetail() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10">
+                    <Checkbox
+                      checked={allFilteredSelected}
+                      onCheckedChange={toggleSelectAll}
+                      aria-label="Select all"
+                    />
+                  </TableHead>
                   <TableHead>HomesPassedID</TableHead>
                   <TableHead>Address</TableHead>
                   <TableHead>QR URL</TableHead>
@@ -232,6 +292,13 @@ export default function BatchDetail() {
               <TableBody>
                 {filteredCodes.map((code) => (
                   <TableRow key={code.id}>
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedIds.has(code.id)}
+                        onCheckedChange={() => toggleSelect(code.id)}
+                        aria-label={`Select ${code.address}`}
+                      />
+                    </TableCell>
                     <TableCell className="font-mono text-sm">{code.homes_passed_id}</TableCell>
                     <TableCell className="text-sm">{code.address}</TableCell>
                     <TableCell className="text-xs text-muted-foreground font-mono">
@@ -262,7 +329,7 @@ export default function BatchDetail() {
                 ))}
                 {filteredCodes.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={role === "admin" ? 5 : 4} className="text-center text-muted-foreground py-8">
+                    <TableCell colSpan={role === "admin" ? 6 : 5} className="text-center text-muted-foreground py-8">
                       {search ? "No matching codes found." : "No codes in this batch."}
                     </TableCell>
                   </TableRow>
@@ -272,6 +339,13 @@ export default function BatchDetail() {
           </div>
         </CardContent>
       </Card>
+
+      <ReprintDialog
+        open={reprintOpen}
+        onOpenChange={setReprintOpen}
+        codes={reprintCodes}
+        batchName={batch.name}
+      />
     </AppLayout>
   );
 }
