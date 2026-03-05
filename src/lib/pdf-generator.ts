@@ -1,5 +1,6 @@
 import QRCodeStyling from "qr-code-styling";
 import QRBorderPlugin from "qr-border-plugin";
+import QRCode from "qrcode";
 import { jsPDF } from "jspdf";
 import type { MappedRecord } from "./batch-types";
 import { AVERY_94107 } from "./batch-types";
