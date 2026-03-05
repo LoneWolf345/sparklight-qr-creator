@@ -521,7 +521,7 @@ export function QrStyleTab() {
             <CardDescription>Sample QR code with current settings</CardDescription>
           </CardHeader>
           <CardContent className="flex items-center justify-center">
-            <div ref={previewRef} className="rounded-lg overflow-hidden border border-border" />
+            <div ref={previewRef} className="w-full max-w-[360px] rounded-lg overflow-hidden border border-border [&>svg]:w-full [&>svg]:h-auto" />
           </CardContent>
         </Card>
       </div>
