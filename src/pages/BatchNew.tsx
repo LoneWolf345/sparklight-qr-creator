@@ -25,8 +25,9 @@ export default function BatchNew() {
 
   // Step 1: Upload
   const [batchName, setBatchName] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-  const [fileError, setFileError] = useState<string | null>(null);
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [market, setMarket] = useState("");
   const [headers, setHeaders] = useState<string[]>([]);
   const [rawData, setRawData] = useState<ParsedRow[]>([]);
 
