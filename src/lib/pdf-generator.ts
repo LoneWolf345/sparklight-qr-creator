@@ -76,8 +76,10 @@ async function renderQrToDataUrl(url: string, options: PdfOptions): Promise<stri
   }
 
   const qrCode = new QRCodeStyling(qrOptions);
-  const blob = await qrCode.getRawData("png");
-  if (!blob) throw new Error("Failed to render QR code");
+  const rawData = await qrCode.getRawData("png");
+  if (!rawData) throw new Error("Failed to render QR code");
+  
+  const blob = rawData instanceof Blob ? rawData : new Blob([rawData], { type: "image/png" });
   
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
