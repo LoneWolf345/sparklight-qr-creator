@@ -384,13 +384,7 @@ export default function BatchNew() {
         <ReviewStep
           records={mappedRecords}
           warnings={warnings}
-          baseUrl={settings.base_url}
-          qrSizeInches={settings.qr_size_inches}
-          primaryColor={settings.primary_color}
-          errorCorrection={settings.qr_error_correction}
-          quietZone={settings.quiet_zone_modules}
-          xOffsetMm={settings.x_offset_mm}
-          yOffsetMm={settings.y_offset_mm}
+          qrSettings={settings}
           startRow={startRow}
           startCol={startCol}
           logoDataUrl={logoDataUrl}
