@@ -285,8 +285,30 @@ export function QrStyleTab() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Embedded Image URL</Label>
-              <Input value={settings.qr_image_url || ""} onChange={(e) => update("qr_image_url", e.target.value || null)} placeholder="https://example.com/logo.png" />
+              <Label>Embedded Logo</Label>
+              <div className="flex items-center gap-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                  className="hidden"
+                  onChange={handleLogoUpload}
+                />
+                {settings.qr_image_url ? (
+                  <div className="flex items-center gap-2 flex-1">
+                    <img src={settings.qr_image_url} alt="QR logo" className="h-10 w-10 rounded border border-input object-contain bg-background" />
+                    <span className="text-sm text-muted-foreground truncate flex-1">{settings.qr_image_url.split('/').pop()}</span>
+                    <Button variant="ghost" size="icon" onClick={() => update("qr_image_url", null)}>
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <Button variant="outline" className="w-full" disabled={uploading} onClick={() => fileInputRef.current?.click()}>
+                    <Upload className="mr-2 h-4 w-4" />
+                    {uploading ? "Uploading…" : "Upload Logo"}
+                  </Button>
+                )}
+              </div>
               <p className="text-xs text-muted-foreground">Optional logo displayed in the center of the QR code</p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
