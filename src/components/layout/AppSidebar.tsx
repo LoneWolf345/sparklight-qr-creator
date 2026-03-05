@@ -20,9 +20,9 @@ import {
 import { Button } from "@/components/ui/button";
 
 const navItems = [
-  { title: "Communities", url: "/batches", icon: Layers },
-  { title: "New Community", url: "/batches/new", icon: Plus },
   { title: "Single QR Code", url: "/single-qr", icon: QrCode },
+  { title: "New Community", url: "/batches/new", icon: Plus },
+  { title: "Communities", url: "/batches", icon: Layers },
 ];
 
 const adminItems = [
