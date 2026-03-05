@@ -43,6 +43,7 @@ export default function SingleQr() {
         setSettings(data as unknown as QrSettings);
         setTopText(data.qr_border_top_text ?? "");
         setBottomText(data.qr_border_bottom_text ?? "");
+        setErrorCorrection(data.qr_error_correction ?? "Q");
       }
       setLoading(false);
       setInitDone(true);
