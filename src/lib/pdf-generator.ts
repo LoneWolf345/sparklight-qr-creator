@@ -91,7 +91,12 @@ async function renderQrToDataUrl(url: string, options: PdfOptions): Promise<stri
     };
   }
 
-  const qrCode = new QRCodeStyling(qrOptions);
+  let qrCode: QRCodeStyling;
+  try {
+    qrCode = new QRCodeStyling(qrOptions);
+  } catch (err) {
+    throw new Error(`Failed to instantiate QRCodeStyling: ${err instanceof Error ? err.message : String(err)}`);
+  }
 
   // Apply border plugin if enabled
   if (options.qrBorderEnabled) {
@@ -133,7 +138,7 @@ async function renderQrToDataUrl(url: string, options: PdfOptions): Promise<stri
   }
 
   const rawData = await qrCode.getRawData("png");
-  if (!rawData) throw new Error("Failed to render QR code");
+  if (!rawData) throw new Error("QRCodeStyling.getRawData('png') returned null — canvas context may be unavailable");
   
   // Handle both Blob and Buffer returns
   const blob: Blob = (rawData as any).arrayBuffer 

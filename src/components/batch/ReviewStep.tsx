@@ -156,9 +156,14 @@ export function ReviewStep({
               title="Label Preview"
             />
           ) : (
-            <p className="text-sm text-muted-foreground text-center py-8">
-              Preview unavailable. Proceed to generate the full PDF.
-            </p>
+            <div className="text-center py-8 space-y-2">
+              <p className="text-sm text-muted-foreground">
+                Preview unavailable. Proceed to generate the full PDF.
+              </p>
+              {previewError && (
+                <p className="text-xs text-destructive">Error: {previewError}</p>
+              )}
+            </div>
           )}
         </CardContent>
       </Card>
