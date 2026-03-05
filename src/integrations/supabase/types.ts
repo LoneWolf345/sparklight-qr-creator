@@ -23,6 +23,20 @@ export type Database = {
           logo_url: string | null
           primary_color: string
           qr_background_color: string
+          qr_border_bottom_style: string
+          qr_border_bottom_text: string | null
+          qr_border_color: string
+          qr_border_dasharray: string | null
+          qr_border_enabled: boolean
+          qr_border_inner_color: string
+          qr_border_inner_thickness: number
+          qr_border_license_key: string | null
+          qr_border_outer_color: string
+          qr_border_outer_thickness: number
+          qr_border_round: number
+          qr_border_thickness: number
+          qr_border_top_style: string
+          qr_border_top_text: string | null
           qr_corner_dot_color: string
           qr_corner_dot_type: string
           qr_corner_square_color: string
@@ -48,6 +62,20 @@ export type Database = {
           logo_url?: string | null
           primary_color?: string
           qr_background_color?: string
+          qr_border_bottom_style?: string
+          qr_border_bottom_text?: string | null
+          qr_border_color?: string
+          qr_border_dasharray?: string | null
+          qr_border_enabled?: boolean
+          qr_border_inner_color?: string
+          qr_border_inner_thickness?: number
+          qr_border_license_key?: string | null
+          qr_border_outer_color?: string
+          qr_border_outer_thickness?: number
+          qr_border_round?: number
+          qr_border_thickness?: number
+          qr_border_top_style?: string
+          qr_border_top_text?: string | null
           qr_corner_dot_color?: string
           qr_corner_dot_type?: string
           qr_corner_square_color?: string
@@ -73,6 +101,20 @@ export type Database = {
           logo_url?: string | null
           primary_color?: string
           qr_background_color?: string
+          qr_border_bottom_style?: string
+          qr_border_bottom_text?: string | null
+          qr_border_color?: string
+          qr_border_dasharray?: string | null
+          qr_border_enabled?: boolean
+          qr_border_inner_color?: string
+          qr_border_inner_thickness?: number
+          qr_border_license_key?: string | null
+          qr_border_outer_color?: string
+          qr_border_outer_thickness?: number
+          qr_border_round?: number
+          qr_border_thickness?: number
+          qr_border_top_style?: string
+          qr_border_top_text?: string | null
           qr_corner_dot_color?: string
           qr_corner_dot_type?: string
           qr_corner_square_color?: string

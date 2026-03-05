@@ -1,0 +1,15 @@
+ALTER TABLE app_settings
+  ADD COLUMN qr_border_enabled boolean NOT NULL DEFAULT false,
+  ADD COLUMN qr_border_round numeric NOT NULL DEFAULT 0,
+  ADD COLUMN qr_border_thickness integer NOT NULL DEFAULT 40,
+  ADD COLUMN qr_border_color text NOT NULL DEFAULT '#000000',
+  ADD COLUMN qr_border_dasharray text DEFAULT NULL,
+  ADD COLUMN qr_border_inner_thickness integer NOT NULL DEFAULT 5,
+  ADD COLUMN qr_border_inner_color text NOT NULL DEFAULT '#000000',
+  ADD COLUMN qr_border_outer_thickness integer NOT NULL DEFAULT 5,
+  ADD COLUMN qr_border_outer_color text NOT NULL DEFAULT '#000000',
+  ADD COLUMN qr_border_top_text text DEFAULT NULL,
+  ADD COLUMN qr_border_top_style text NOT NULL DEFAULT 'font: 20px sans-serif; fill: #FFFFFF;',
+  ADD COLUMN qr_border_bottom_text text DEFAULT NULL,
+  ADD COLUMN qr_border_bottom_style text NOT NULL DEFAULT 'font: 20px sans-serif; fill: #FFFFFF;',
+  ADD COLUMN qr_border_license_key text DEFAULT NULL;
