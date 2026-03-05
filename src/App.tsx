@@ -10,6 +10,7 @@ import Batches from "@/pages/Batches";
 import BatchNew from "@/pages/BatchNew";
 import BatchDetail from "@/pages/BatchDetail";
 import Admin from "@/pages/Admin";
+import SingleQr from "@/pages/SingleQr";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/batches" element={<ProtectedRoute><Batches /></ProtectedRoute>} />
             <Route path="/batches/new" element={<ProtectedRoute><BatchNew /></ProtectedRoute>} />
             <Route path="/batches/:id" element={<ProtectedRoute><BatchDetail /></ProtectedRoute>} />
+            <Route path="/single-qr" element={<ProtectedRoute><SingleQr /></ProtectedRoute>} />
             <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>

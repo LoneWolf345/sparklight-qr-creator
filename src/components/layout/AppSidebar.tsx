@@ -1,4 +1,4 @@
-import { Layers, Plus, Settings, LogOut } from "lucide-react";
+import { Layers, Plus, Settings, LogOut, QrCode } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 const navItems = [
   { title: "Communities", url: "/batches", icon: Layers },
   { title: "New Community", url: "/batches/new", icon: Plus },
+  { title: "Single QR Code", url: "/single-qr", icon: QrCode },
 ];
 
 const adminItems = [

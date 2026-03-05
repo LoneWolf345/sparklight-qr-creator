@@ -45,7 +45,7 @@ interface PdfOptions {
   qrBorderLicenseKey?: string | null;
 }
 
-async function renderQrToDataUrl(
+export async function renderQrToDataUrl(
   url: string,
   options: PdfOptions,
   bottomTextOverride?: string,
