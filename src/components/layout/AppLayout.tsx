@@ -9,7 +9,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="flex-1 flex flex-col">
           <header className="h-12 flex items-center border-b bg-card px-4">
             <SidebarTrigger className="mr-4" />
-            <span className="text-sm font-semibold text-foreground">Sparklight QR Batch Generator</span>
           </header>
           <main className="flex-1 p-6">{children}</main>
         </div>
