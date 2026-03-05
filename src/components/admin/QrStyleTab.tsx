@@ -391,7 +391,7 @@ export function QrStyleTab() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label>Image Size ({Math.round(settings.qr_image_size * 100)}%)</Label>
-                <Slider value={[settings.qr_image_size]} onValueChange={([v]) => update("qr_image_size", v)} min={0.1} max={0.5} step={0.05} />
+                <Slider value={[settings.qr_image_size]} onValueChange={([v]) => update("qr_image_size", v)} min={0.1} max={0.8} step={0.05} />
               </div>
               <div className="space-y-2">
                 <Label>Image Margin (px)</Label>
