@@ -273,7 +273,7 @@ export default function BatchNew() {
         .update({ status: "completed" })
         .eq("id", batch.id);
 
-      toast.success(`Batch generated: ${validRecords.length} QR codes`);
+      toast.success(`Community generated: ${validRecords.length} QR codes`);
     } catch (err: any) {
       toast.error("Generation failed: " + err.message);
     }
