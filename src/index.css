@@ -44,14 +44,14 @@
 
     --radius: 0.5rem;
 
-    --sidebar-background: 284 52% 18%;
-    --sidebar-foreground: 240 5% 10%;
-    --sidebar-primary: 258 89% 66%;
-    --sidebar-primary-foreground: 250 100% 97%;
-    --sidebar-accent: 240 5% 33%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 4% 83%;
-    --sidebar-ring: 258 89% 66%;
+    --sidebar-background: 280 20% 96%;
+    --sidebar-foreground: 240 5% 15%;
+    --sidebar-primary: 298 42% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 280 30% 90%;
+    --sidebar-accent-foreground: 298 42% 35%;
+    --sidebar-border: 280 10% 88%;
+    --sidebar-ring: 298 42% 40%;
     --chart-1: 207 100% 34%;
     --chart-2: 89 58% 39%;
     --chart-3: 171 79% 40%;
