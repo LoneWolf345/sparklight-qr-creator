@@ -95,6 +95,21 @@ export default function SingleQr() {
 
     qr.append(previewRef.current);
     qrRef.current = qr;
+
+    // Force trial watermark position (plugin may inject inline styles that override CSS)
+    requestAnimationFrame(() => {
+      const trialNodes = document.querySelectorAll<HTMLElement>(".qr-border-plugin-trial");
+      trialNodes.forEach((node) => {
+        node.style.setProperty("position", "fixed", "important");
+        node.style.setProperty("top", "auto", "important");
+        node.style.setProperty("left", "auto", "important");
+        node.style.setProperty("bottom", "4px", "important");
+        node.style.setProperty("right", "4px", "important");
+        node.style.setProperty("font-size", "9px", "important");
+        node.style.setProperty("opacity", "0.3", "important");
+        node.style.setProperty("pointer-events", "none", "important");
+      });
+    });
   }, [settings, url, topText, bottomText, errorCorrection, initDone]);
 
   const handleDownload = async (type: "png" | "svg") => {
