@@ -46,7 +46,7 @@ export default function BatchNew() {
   const [batchId, setBatchId] = useState<string | null>(null);
 
   // Settings
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<any>({
     base_url: "https://go.sparklight.internal",
     qr_size_inches: 1.35,
     primary_color: "#7B2D8E",
@@ -55,6 +55,16 @@ export default function BatchNew() {
     quiet_zone_modules: 4,
     x_offset_mm: 0,
     y_offset_mm: 0,
+    qr_dot_type: "square",
+    qr_dot_color: "#000000",
+    qr_corner_square_type: "square",
+    qr_corner_square_color: "#000000",
+    qr_corner_dot_type: "square",
+    qr_corner_dot_color: "#000000",
+    qr_background_color: "#FFFFFF",
+    qr_image_url: null,
+    qr_image_size: 0.4,
+    qr_image_margin: 5,
   });
 
   // Logo data URL
