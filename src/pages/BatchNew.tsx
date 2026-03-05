@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { ArrowLeft, ArrowRight, Loader2, Download } from "lucide-react";
 import sparklightLogo from "@/assets/sparklight-logo.png";
 import type { ParsedRow, ColumnMapping, MappedRecord, ValidationWarning } from "@/lib/batch-types";
+import { buildPdfOptions } from "@/lib/pdf-options";
 
 const STEPS = ["Upload", "Map Columns", "Review", "Generate"];
 
