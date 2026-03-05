@@ -173,6 +173,7 @@ export default function BatchNew() {
         setFileError("City, State, and Market are required.");
         return;
       }
+      if (!file || rawData.length === 0) {
         setFileError("Please upload a file first.");
         return;
       }
