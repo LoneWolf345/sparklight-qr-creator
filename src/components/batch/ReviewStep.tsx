@@ -36,6 +36,7 @@ export function ReviewStep({
 }: ReviewStepProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loadingPreview, setLoadingPreview] = useState(true);
+  const [previewError, setPreviewError] = useState<string | null>(null);
 
   const validRecords = records.filter((r) => r.homesPassedId);
   const errorWarnings = warnings.filter((w) => w.type === "missing_id");
@@ -46,6 +47,7 @@ export function ReviewStep({
 
     const generate = async () => {
       setLoadingPreview(true);
+      setPreviewError(null);
       try {
         const url = await generatePreviewCanvas(validRecords, {
           baseUrl,
@@ -61,8 +63,9 @@ export function ReviewStep({
           logoDataUrl,
         }, 600);
         if (!cancelled) setPreviewUrl(url);
-      } catch {
-        // preview failed silently
+      } catch (err) {
+        console.error("Preview generation failed:", err);
+        if (!cancelled) setPreviewError(err instanceof Error ? err.message : String(err));
       }
       if (!cancelled) setLoadingPreview(false);
     };
@@ -153,9 +156,14 @@ export function ReviewStep({
               title="Label Preview"
             />
           ) : (
-            <p className="text-sm text-muted-foreground text-center py-8">
-              Preview unavailable. Proceed to generate the full PDF.
-            </p>
+            <div className="text-center py-8 space-y-2">
+              <p className="text-sm text-muted-foreground">
+                Preview unavailable. Proceed to generate the full PDF.
+              </p>
+              {previewError && (
+                <p className="text-xs text-destructive">Error: {previewError}</p>
+              )}
+            </div>
           )}
         </CardContent>
       </Card>
