@@ -37,7 +37,7 @@ export default function Batches() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">All Batches</CardTitle>
+          <CardTitle className="text-lg">All Communities</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
