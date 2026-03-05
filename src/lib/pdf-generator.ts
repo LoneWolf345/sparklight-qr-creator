@@ -92,6 +92,46 @@ async function renderQrToDataUrl(url: string, options: PdfOptions): Promise<stri
   }
 
   const qrCode = new QRCodeStyling(qrOptions);
+
+  // Apply border plugin if enabled
+  if (options.qrBorderEnabled) {
+    if (options.qrBorderLicenseKey) {
+      QRBorderPlugin.setKey(options.qrBorderLicenseKey);
+    }
+    const extOpts: any = {
+      round: options.qrBorderRound ?? 0,
+      thickness: options.qrBorderThickness ?? 40,
+      color: options.qrBorderColor ?? "#000000",
+      borderInner: {
+        color: options.qrBorderInnerColor ?? "#000000",
+        thickness: options.qrBorderInnerThickness ?? 5,
+      },
+      borderOuter: {
+        color: options.qrBorderOuterColor ?? "#000000",
+        thickness: options.qrBorderOuterThickness ?? 5,
+      },
+      decorations: {},
+    };
+    if (options.qrBorderDasharray) {
+      extOpts.dasharray = options.qrBorderDasharray;
+    }
+    if (options.qrBorderTopText) {
+      extOpts.decorations.top = {
+        type: "text",
+        value: options.qrBorderTopText,
+        style: options.qrBorderTopStyle || "font: 20px sans-serif; fill: #FFFFFF;",
+      };
+    }
+    if (options.qrBorderBottomText) {
+      extOpts.decorations.bottom = {
+        type: "text",
+        value: options.qrBorderBottomText,
+        style: options.qrBorderBottomStyle || "font: 20px sans-serif; fill: #FFFFFF;",
+      };
+    }
+    qrCode.applyExtension(QRBorderPlugin(extOpts));
+  }
+
   const rawData = await qrCode.getRawData("png");
   if (!rawData) throw new Error("Failed to render QR code");
   
