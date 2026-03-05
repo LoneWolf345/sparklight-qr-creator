@@ -11,7 +11,7 @@ ENV VITE_SUPABASE_PUBLISHABLE_KEY=$VITE_SUPABASE_PUBLISHABLE_KEY
 ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
 
 COPY package*.json ./
-RUN npm ci --no-cache
+RUN npm install
 COPY . .
 RUN npm run build
 
@@ -33,9 +33,6 @@ ENV HOME=/opt/app-root/home \
     PORT=8080 \
     NPM_CONFIG_CACHE=/opt/app-root/home/.npm \
     NODE_OPTIONS="--max-old-space-size=384"
-
-COPY package*.json ./
-RUN npm ci --omit=dev --no-cache
 
 COPY --from=builder /opt/app-root/src/dist ./dist
 COPY vite.config.ts ./
