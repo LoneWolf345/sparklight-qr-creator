@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { LabelStartPicker } from "@/components/batch/LabelStartPicker";
 import { toast } from "sonner";
@@ -22,6 +23,7 @@ export default function SingleQr() {
   const [url, setUrl] = useState("");
   const [topText, setTopText] = useState("");
   const [bottomText, setBottomText] = useState("");
+  const [errorCorrection, setErrorCorrection] = useState("Q");
   const [initDone, setInitDone] = useState(false);
 
   const previewRef = useRef<HTMLDivElement>(null);
@@ -41,6 +43,7 @@ export default function SingleQr() {
         setSettings(data as unknown as QrSettings);
         setTopText(data.qr_border_top_text ?? "");
         setBottomText(data.qr_border_bottom_text ?? "");
+        setErrorCorrection(data.qr_error_correction ?? "Q");
       }
       setLoading(false);
       setInitDone(true);
@@ -62,7 +65,7 @@ export default function SingleQr() {
       cornersSquareOptions: { type: settings.qr_corner_square_type, color: settings.qr_corner_square_color },
       cornersDotOptions: { type: settings.qr_corner_dot_type, color: settings.qr_corner_dot_color },
       backgroundOptions: { color: settings.qr_background_color },
-      qrOptions: { errorCorrectionLevel: settings.qr_error_correction },
+      qrOptions: { errorCorrectionLevel: errorCorrection },
       margin: settings.qr_border_enabled ? 40 : settings.quiet_zone_modules,
     };
 
@@ -92,7 +95,7 @@ export default function SingleQr() {
 
     qr.append(previewRef.current);
     qrRef.current = qr;
-  }, [settings, url, topText, bottomText, initDone]);
+  }, [settings, url, topText, bottomText, errorCorrection, initDone]);
 
   const handleDownload = async (type: "png" | "svg") => {
     if (!qrRef.current) return;
@@ -126,6 +129,7 @@ export default function SingleQr() {
       // Override top/bottom text with user input
       pdfOpts.qrBorderTopText = topText || null;
       pdfOpts.qrBorderBottomText = bottomText || null;
+      pdfOpts.errorCorrection = errorCorrection as "L" | "M" | "Q" | "H";
 
       const layout = AVERY_94107;
       const doc = new jsPDF({ unit: "in", format: "letter" });
@@ -190,9 +194,23 @@ export default function SingleQr() {
             <CardTitle className="text-lg">QR Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>URL *</Label>
-              <Input placeholder="https://example.com" value={url} onChange={(e) => setUrl(e.target.value)} />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label>URL *</Label>
+                <Input placeholder="https://example.com" value={url} onChange={(e) => setUrl(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Error Correction</Label>
+                <Select value={errorCorrection} onValueChange={setErrorCorrection}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="L">L – Low (7%)</SelectItem>
+                    <SelectItem value="M">M – Medium (15%)</SelectItem>
+                    <SelectItem value="Q">Q – Quartile (25%)</SelectItem>
+                    <SelectItem value="H">H – High (30%)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             {settings?.qr_border_enabled && (
               <div className="grid gap-4 sm:grid-cols-2">
