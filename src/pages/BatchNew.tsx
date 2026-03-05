@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { ArrowLeft, ArrowRight, Loader2, Download } from "lucide-react";
 import sparklightLogo from "@/assets/sparklight-logo.png";
 import type { ParsedRow, ColumnMapping, MappedRecord, ValidationWarning } from "@/lib/batch-types";
+import { buildPdfOptions } from "@/lib/pdf-options";
 
 const STEPS = ["Upload", "Map Columns", "Review", "Generate"];
 
@@ -231,43 +232,8 @@ export default function BatchNew() {
       }
 
       // 3. Generate PDF
-      const blob = await generatePdf(validRecords, {
-        baseUrl: settings.base_url,
-        qrSizeInches: settings.qr_size_inches,
-        primaryColor: settings.primary_color,
-        secondaryColor: settings.secondary_color,
-        errorCorrection: settings.qr_error_correction as "L" | "M" | "Q" | "H",
-        quietZone: settings.quiet_zone_modules,
-        xOffsetMm: settings.x_offset_mm,
-        yOffsetMm: settings.y_offset_mm,
-        startRow,
-        startCol,
-        logoDataUrl,
-        qrDotType: settings.qr_dot_type,
-        qrDotColor: settings.qr_dot_color,
-        qrCornerSquareType: settings.qr_corner_square_type,
-        qrCornerSquareColor: settings.qr_corner_square_color,
-        qrCornerDotType: settings.qr_corner_dot_type,
-        qrCornerDotColor: settings.qr_corner_dot_color,
-        qrBackgroundColor: settings.qr_background_color,
-        qrImageUrl: settings.qr_image_url,
-        qrImageSize: settings.qr_image_size,
-        qrImageMargin: settings.qr_image_margin,
-        qrBorderEnabled: settings.qr_border_enabled,
-        qrBorderRound: settings.qr_border_round,
-        qrBorderThickness: settings.qr_border_thickness,
-        qrBorderColor: settings.qr_border_color,
-        qrBorderDasharray: settings.qr_border_dasharray,
-        qrBorderInnerThickness: settings.qr_border_inner_thickness,
-        qrBorderInnerColor: settings.qr_border_inner_color,
-        qrBorderOuterThickness: settings.qr_border_outer_thickness,
-        qrBorderOuterColor: settings.qr_border_outer_color,
-        qrBorderTopText: settings.qr_border_top_text,
-        qrBorderTopStyle: settings.qr_border_top_style,
-        qrBorderBottomText: settings.qr_border_bottom_text,
-        qrBorderBottomStyle: settings.qr_border_bottom_style,
-        qrBorderLicenseKey: settings.qr_border_license_key,
-      });
+      const pdfOptions = buildPdfOptions(settings, startRow, startCol, logoDataUrl);
+      const blob = await generatePdf(validRecords, pdfOptions);
       setPdfBlob(blob);
 
       // 4. Update batch status
@@ -383,13 +349,7 @@ export default function BatchNew() {
         <ReviewStep
           records={mappedRecords}
           warnings={warnings}
-          baseUrl={settings.base_url}
-          qrSizeInches={settings.qr_size_inches}
-          primaryColor={settings.primary_color}
-          errorCorrection={settings.qr_error_correction}
-          quietZone={settings.quiet_zone_modules}
-          xOffsetMm={settings.x_offset_mm}
-          yOffsetMm={settings.y_offset_mm}
+          qrSettings={settings}
           startRow={startRow}
           startCol={startCol}
           logoDataUrl={logoDataUrl}
