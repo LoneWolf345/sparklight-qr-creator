@@ -25,6 +25,9 @@ export default function BatchNew() {
 
   // Step 1: Upload
   const [batchName, setBatchName] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [market, setMarket] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [headers, setHeaders] = useState<string[]>([]);
@@ -163,7 +166,11 @@ export default function BatchNew() {
   const handleNextStep = () => {
     if (step === 0) {
       if (!batchName.trim()) {
-        setFileError("Please enter a batch name.");
+        setFileError("Please enter a community name.");
+        return;
+      }
+      if (!city.trim() || !state.trim() || !market.trim()) {
+        setFileError("City, State, and Market are required.");
         return;
       }
       if (!file || rawData.length === 0) {
@@ -201,6 +208,9 @@ export default function BatchNew() {
           row_count: validRecords.length,
           status: "generating",
           destination_url_override: destinationOverride || null,
+          city: city.trim(),
+          state: state.trim(),
+          market: market.trim(),
         })
         .select()
         .single();
@@ -266,7 +276,7 @@ export default function BatchNew() {
         .update({ status: "completed" })
         .eq("id", batch.id);
 
-      toast.success(`Batch generated: ${validRecords.length} QR codes`);
+      toast.success(`Community generated: ${validRecords.length} QR codes`);
     } catch (err: any) {
       toast.error("Generation failed: " + err.message);
     }
@@ -306,7 +316,7 @@ export default function BatchNew() {
   return (
     <AppLayout>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-foreground">Create New Batch</h1>
+        <h1 className="text-2xl font-bold text-foreground">Create New Community</h1>
       </div>
 
       {/* Stepper */}
@@ -343,6 +353,12 @@ export default function BatchNew() {
         <FileUploadStep
           batchName={batchName}
           onBatchNameChange={setBatchName}
+          city={city}
+          onCityChange={setCity}
+          state={state}
+          onStateChange={setState}
+          market={market}
+          onMarketChange={setMarket}
           onFileLoaded={handleFileLoaded}
           error={fileError}
         />
@@ -384,7 +400,7 @@ export default function BatchNew() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              {generating ? "Generating…" : "Batch Complete"}
+              {generating ? "Generating…" : "Community Complete"}
             </CardTitle>
             <CardDescription>
               {generating
@@ -406,9 +422,9 @@ export default function BatchNew() {
                 <Button variant="outline" onClick={handleDownloadCsv}>
                   <Download className="mr-2 h-4 w-4" /> Download CSV Mapping
                 </Button>
-                {batchId && (
-                  <Button variant="outline" onClick={() => navigate(`/batches/${batchId}`)}>
-                    View Batch Details
+                 {batchId && (
+                   <Button variant="outline" onClick={() => navigate(`/batches/${batchId}`)}>
+                     View Community Details
                   </Button>
                 )}
               </div>

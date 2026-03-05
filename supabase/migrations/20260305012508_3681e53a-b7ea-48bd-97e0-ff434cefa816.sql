@@ -1,0 +1,1 @@
+ALTER TABLE public.qr_batches ADD COLUMN city text, ADD COLUMN state text, ADD COLUMN market text;

@@ -27,52 +27,58 @@ export default function Batches() {
   return (
     <AppLayout>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-foreground">QR Batches</h1>
+        <h1 className="text-2xl font-bold text-foreground">Communities</h1>
         <Button asChild>
           <Link to="/batches/new">
-            <Plus className="mr-2 h-4 w-4" /> New Batch
+            <Plus className="mr-2 h-4 w-4" /> New Community
           </Link>
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">All Batches</CardTitle>
+          <CardTitle className="text-lg">All Communities</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
             <p className="text-muted-foreground text-sm">Loading…</p>
           ) : batches.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-muted-foreground mb-4">No batches yet. Create your first batch to get started.</p>
+              <p className="text-muted-foreground mb-4">No communities yet. Create your first community to get started.</p>
               <Button asChild variant="outline">
-                <Link to="/batches/new">Create Batch</Link>
+                <Link to="/batches/new">Create Community</Link>
               </Button>
             </div>
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Rows</TableHead>
-                  <TableHead>Created</TableHead>
-                </TableRow>
+                 <TableRow>
+                   <TableHead>Name</TableHead>
+                   <TableHead>City</TableHead>
+                   <TableHead>State</TableHead>
+                   <TableHead>Market</TableHead>
+                   <TableHead>Status</TableHead>
+                   <TableHead>Rows</TableHead>
+                   <TableHead>Created</TableHead>
+                 </TableRow>
               </TableHeader>
               <TableBody>
                 {batches.map((b) => (
                   <TableRow key={b.id}>
                     <TableCell>
-                      <Link to={`/batches/${b.id}`} className="text-primary hover:underline font-medium">
-                        {b.name}
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={b.status === "completed" ? "default" : "secondary"}>
-                        {b.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{b.row_count}</TableCell>
+                       <Link to={`/batches/${b.id}`} className="text-primary hover:underline font-medium">
+                         {b.name}
+                       </Link>
+                     </TableCell>
+                     <TableCell className="text-sm">{b.city || "—"}</TableCell>
+                     <TableCell className="text-sm">{b.state || "—"}</TableCell>
+                     <TableCell className="text-sm">{b.market || "—"}</TableCell>
+                     <TableCell>
+                       <Badge variant={b.status === "completed" ? "default" : "secondary"}>
+                         {b.status}
+                       </Badge>
+                     </TableCell>
+                     <TableCell>{b.row_count}</TableCell>
                     <TableCell className="text-muted-foreground text-sm">
                       {format(new Date(b.created_at), "MMM d, yyyy h:mm a")}
                     </TableCell>

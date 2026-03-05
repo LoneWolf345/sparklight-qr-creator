@@ -166,34 +166,43 @@ export type Database = {
       }
       qr_batches: {
         Row: {
+          city: string | null
           created_at: string
           created_by: string
           destination_url_override: string | null
           id: string
+          market: string | null
           name: string
           row_count: number
+          state: string | null
           status: string
           template: string
           updated_at: string
         }
         Insert: {
+          city?: string | null
           created_at?: string
           created_by: string
           destination_url_override?: string | null
           id?: string
+          market?: string | null
           name: string
           row_count?: number
+          state?: string | null
           status?: string
           template?: string
           updated_at?: string
         }
         Update: {
+          city?: string | null
           created_at?: string
           created_by?: string
           destination_url_override?: string | null
           id?: string
+          market?: string | null
           name?: string
           row_count?: number
+          state?: string | null
           status?: string
           template?: string
           updated_at?: string

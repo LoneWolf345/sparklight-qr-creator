@@ -28,6 +28,9 @@ interface Batch {
   created_at: string;
   created_by: string;
   destination_url_override: string | null;
+  city: string | null;
+  state: string | null;
+  market: string | null;
 }
 
 export default function BatchDetail() {
@@ -117,6 +120,7 @@ export default function BatchDetail() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">{batch.name}</h1>
           <p className="text-sm text-muted-foreground">
+            {[batch.city, batch.state, batch.market].filter(Boolean).join(" · ") || ""}{" "}
             Created {format(new Date(batch.created_at), "MMM d, yyyy h:mm a")} · {batch.row_count} codes
           </p>
         </div>
