@@ -45,16 +45,11 @@ interface PdfOptions {
   qrBorderLicenseKey?: string | null;
 }
 
-function hexToRgb(hex: string): [number, number, number] {
-  const h = hex.replace("#", "");
-  return [
-    parseInt(h.substring(0, 2), 16),
-    parseInt(h.substring(2, 4), 16),
-    parseInt(h.substring(4, 6), 16),
-  ];
-}
-
-async function renderQrToDataUrl(url: string, options: PdfOptions): Promise<string> {
+async function renderQrToDataUrl(
+  url: string,
+  options: PdfOptions,
+  bottomTextOverride?: string,
+): Promise<string> {
   const sizePx = Math.round(options.qrSizeInches * 300);
 
   const renderFallbackQr = async () => {
@@ -92,7 +87,8 @@ async function renderQrToDataUrl(url: string, options: PdfOptions): Promise<stri
     qrOptions: {
       errorCorrectionLevel: options.errorCorrection,
     },
-    margin: 0,
+    // Add margin when border is enabled so the frame doesn't overlap QR modules
+    margin: options.qrBorderEnabled ? 40 : 0,
   };
 
   if (options.qrImageUrl) {
@@ -134,17 +130,19 @@ async function renderQrToDataUrl(url: string, options: PdfOptions): Promise<stri
     if (options.qrBorderDasharray) {
       extOpts.dasharray = options.qrBorderDasharray;
     }
-    if (options.qrBorderTopText) {
-      extOpts.decorations.top = {
-        type: "text",
-        value: options.qrBorderTopText,
-        style: options.qrBorderTopStyle || "font: 20px sans-serif; fill: #FFFFFF;",
-      };
-    }
-    if (options.qrBorderBottomText) {
+    // Top text: use saved setting (fallback "Activate WiFi")
+    const topText = options.qrBorderTopText || "Activate WiFi";
+    extOpts.decorations.top = {
+      type: "text",
+      value: topText,
+      style: options.qrBorderTopStyle || "font: 20px sans-serif; fill: #FFFFFF;",
+    };
+    // Bottom text: use per-record override (address), fall back to saved setting
+    const bottomText = bottomTextOverride || options.qrBorderBottomText || "";
+    if (bottomText) {
       extOpts.decorations.bottom = {
         type: "text",
-        value: options.qrBorderBottomText,
+        value: bottomText,
         style: options.qrBorderBottomStyle || "font: 20px sans-serif; fill: #FFFFFF;",
       };
     }
@@ -184,12 +182,10 @@ export async function generatePdf(
   const {
     baseUrl,
     qrSizeInches,
-    primaryColor,
     xOffsetMm,
     yOffsetMm,
     startRow,
     startCol,
-    logoDataUrl,
   } = options;
 
   const layout = AVERY_94107;
@@ -223,56 +219,16 @@ export async function generatePdf(
     const labelX = layout.marginLeft + col * (layout.labelWidth + layout.colGap) + xOffsetIn;
     const labelY = layout.marginTop + row * (layout.labelHeight + layout.rowGap) + yOffsetIn;
 
-    // Generate QR code using qr-code-styling
+    // Generate QR code with per-record address as bottom border text
     const qrUrl = `${baseUrl}/HH/${record.homesPassedId}`;
-    const qrDataUrl = await renderQrToDataUrl(qrUrl, options);
+    const qrDataUrl = await renderQrToDataUrl(qrUrl, options, record.address);
 
     // Center QR within label
     const qrX = labelX + (layout.labelWidth - qrSizeInches) / 2;
-    const qrTopMargin = 0.12;
-    const qrY = labelY + qrTopMargin;
+    const qrY = labelY + (layout.labelHeight - qrSizeInches) / 2;
 
-    // Draw QR
+    // Draw QR – this is the only element on the label
     doc.addImage(qrDataUrl, "PNG", qrX, qrY, qrSizeInches, qrSizeInches);
-
-    // Logo / Sparklight wordmark above QR (if provided)
-    if (logoDataUrl) {
-      const logoWidth = 0.9;
-      const logoHeight = 0.18;
-      const logoX = labelX + (layout.labelWidth - logoWidth) / 2;
-      const logoY = qrY - logoHeight - 0.02;
-      try {
-        doc.addImage(logoDataUrl, "PNG", logoX, logoY, logoWidth, logoHeight);
-      } catch {
-        // skip logo if invalid
-      }
-    }
-
-    // Address text below QR
-    const textStartY = qrY + qrSizeInches + 0.08;
-    const [pr, pg, pb] = hexToRgb(primaryColor);
-    doc.setTextColor(40, 40, 40);
-    doc.setFontSize(6.5);
-
-    const address = record.address;
-    const maxTextWidth = layout.labelWidth - 0.16;
-    const addressLines = doc.splitTextToSize(address, maxTextWidth) as string[];
-    const displayLines = addressLines.slice(0, 2);
-    const textCenterX = labelX + layout.labelWidth / 2;
-
-    displayLines.forEach((line: string, idx: number) => {
-      doc.text(line, textCenterX, textStartY + idx * 0.1, { align: "center" });
-    });
-
-    const hpIdY = textStartY + displayLines.length * 0.1 + 0.04;
-    doc.setFontSize(5);
-    doc.setTextColor(120, 120, 120);
-    doc.text(`ID: ${record.homesPassedId}`, textCenterX, hpIdY, { align: "center" });
-
-    const scanY = hpIdY + 0.09;
-    doc.setFontSize(5.5);
-    doc.setTextColor(pr, pg, pb);
-    doc.text("Scan to get started", textCenterX, scanY, { align: "center" });
 
     labelIndex++;
   }
@@ -315,11 +271,13 @@ export async function generatePreviewCanvas(
     const labelXIn = layout.marginLeft + col * (layout.labelWidth + layout.colGap) + xOffsetIn;
     const labelYIn = layout.marginTop + row * (layout.labelHeight + layout.rowGap) + yOffsetIn;
 
+    // Generate QR with per-record address as bottom border text
     const qrUrl = `${options.baseUrl}/HH/${record.homesPassedId}`;
-    const qrDataUrl = await renderQrToDataUrl(qrUrl, options);
+    const qrDataUrl = await renderQrToDataUrl(qrUrl, options, record.address);
 
+    // Center QR within label
     const qrXIn = labelXIn + (layout.labelWidth - options.qrSizeInches) / 2;
-    const qrYIn = labelYIn + 0.12;
+    const qrYIn = labelYIn + (layout.labelHeight - options.qrSizeInches) / 2;
 
     const qrImg = new Image();
     qrImg.src = qrDataUrl;
@@ -328,6 +286,7 @@ export async function generatePreviewCanvas(
       qrImg.onerror = () => reject(new Error("Failed to load generated QR image"));
     });
 
+    // Draw QR – only element on the label
     ctx.drawImage(
       qrImg,
       Math.round(qrXIn * pxPerIn),
@@ -335,71 +294,6 @@ export async function generatePreviewCanvas(
       Math.round(options.qrSizeInches * pxPerIn),
       Math.round(options.qrSizeInches * pxPerIn)
     );
-
-    if (options.logoDataUrl) {
-      const logoWidthIn = 0.9;
-      const logoHeightIn = 0.18;
-      const logoXIn = labelXIn + (layout.labelWidth - logoWidthIn) / 2;
-      const logoYIn = qrYIn - logoHeightIn - 0.02;
-
-      try {
-        const logoImg = new Image();
-        logoImg.src = options.logoDataUrl;
-        await new Promise<void>((resolve, reject) => {
-          logoImg.onload = () => resolve();
-          logoImg.onerror = () => reject(new Error("Failed to load logo image"));
-        });
-        ctx.drawImage(
-          logoImg,
-          Math.round(logoXIn * pxPerIn),
-          Math.round(logoYIn * pxPerIn),
-          Math.round(logoWidthIn * pxPerIn),
-          Math.round(logoHeightIn * pxPerIn)
-        );
-      } catch {
-        // skip invalid logo in preview
-      }
-    }
-
-    const textCenterXPx = Math.round((labelXIn + layout.labelWidth / 2) * pxPerIn);
-    const textStartYPx = Math.round((qrYIn + options.qrSizeInches + 0.08) * pxPerIn);
-    const ptToPx = (pt: number) => Math.max(1, Math.round((pt / 72) * pxPerIn));
-
-    ctx.textAlign = "center";
-    ctx.textBaseline = "alphabetic";
-
-    ctx.fillStyle = "#282828";
-    ctx.font = `${ptToPx(6.5)}px sans-serif`;
-
-    const maxTextWidthPx = Math.round((layout.labelWidth - 0.16) * pxPerIn);
-    const words = (record.address || "").split(/\s+/).filter(Boolean);
-    const lines: string[] = [];
-    let currentLine = "";
-
-    for (const word of words) {
-      const testLine = currentLine ? `${currentLine} ${word}` : word;
-      if (ctx.measureText(testLine).width <= maxTextWidthPx || !currentLine) {
-        currentLine = testLine;
-      } else {
-        lines.push(currentLine);
-        currentLine = word;
-      }
-      if (lines.length === 2) break;
-    }
-    if (lines.length < 2 && currentLine) lines.push(currentLine);
-
-    lines.slice(0, 2).forEach((line, lineIdx) => {
-      ctx.fillText(line, textCenterXPx, textStartYPx + lineIdx * Math.round(0.1 * pxPerIn));
-    });
-
-    ctx.fillStyle = "#787878";
-    ctx.font = `${ptToPx(5)}px sans-serif`;
-    const hpIdYPx = textStartYPx + lines.slice(0, 2).length * Math.round(0.1 * pxPerIn) + Math.round(0.04 * pxPerIn);
-    ctx.fillText(`ID: ${record.homesPassedId}`, textCenterXPx, hpIdYPx);
-
-    ctx.fillStyle = options.primaryColor;
-    ctx.font = `${ptToPx(5.5)}px sans-serif`;
-    ctx.fillText("Scan to get started", textCenterXPx, hpIdYPx + Math.round(0.09 * pxPerIn));
 
     labelIndex++;
   }
