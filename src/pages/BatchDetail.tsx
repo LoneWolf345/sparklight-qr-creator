@@ -1,19 +1,235 @@
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { ArrowLeft, Download, Search } from "lucide-react";
+import { format } from "date-fns";
+
+interface QrCode {
+  id: string;
+  homes_passed_id: string;
+  address: string;
+  status: string;
+  created_at: string;
+}
+
+interface Batch {
+  id: string;
+  name: string;
+  status: string;
+  row_count: number;
+  template: string;
+  created_at: string;
+  created_by: string;
+  destination_url_override: string | null;
+}
 
 export default function BatchDetail() {
   const { id } = useParams();
+  const { role } = useAuth();
+  const [batch, setBatch] = useState<Batch | null>(null);
+  const [codes, setCodes] = useState<QrCode[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [settings, setSettings] = useState({ base_url: "" });
+
+  useEffect(() => {
+    if (!id) return;
+    Promise.all([
+      supabase.from("qr_batches").select("*").eq("id", id).single(),
+      supabase.from("qr_codes").select("*").eq("batch_id", id).order("created_at"),
+      supabase.from("app_settings").select("base_url").limit(1).single(),
+    ]).then(([batchRes, codesRes, settingsRes]) => {
+      setBatch(batchRes.data as Batch);
+      setCodes((codesRes.data as QrCode[]) ?? []);
+      if (settingsRes.data) setSettings({ base_url: settingsRes.data.base_url });
+      setLoading(false);
+    });
+  }, [id]);
+
+  const filteredCodes = codes.filter(
+    (c) =>
+      c.homes_passed_id.toLowerCase().includes(search.toLowerCase()) ||
+      c.address.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const handleDownloadCsv = () => {
+    if (!batch) return;
+    const rows = [
+      ["HomesPassedID", "Address", "QR_URL", "Status"],
+      ...codes.map((c) => [
+        c.homes_passed_id,
+        c.address,
+        `${settings.base_url}/HH/${c.homes_passed_id}`,
+        c.status,
+      ]),
+    ];
+    const csv = rows.map((r) => r.map((c) => `"${c.replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${batch.name.replace(/[^a-zA-Z0-9]/g, "_")}_codes.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleRevokeCode = async (codeId: string) => {
+    const { error } = await supabase
+      .from("qr_codes")
+      .update({ status: "revoked" })
+      .eq("id", codeId);
+    if (!error) {
+      setCodes(codes.map((c) => (c.id === codeId ? { ...c, status: "revoked" } : c)));
+    }
+  };
+
+  if (loading) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center py-12">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (!batch) {
+    return (
+      <AppLayout>
+        <p className="text-destructive">Batch not found.</p>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
-      <h1 className="text-2xl font-bold text-foreground mb-6">Batch Detail</h1>
+      <div className="flex items-center gap-3 mb-6">
+        <Button variant="ghost" size="icon" asChild>
+          <Link to="/batches"><ArrowLeft className="h-5 w-5" /></Link>
+        </Button>
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">{batch.name}</h1>
+          <p className="text-sm text-muted-foreground">
+            Created {format(new Date(batch.created_at), "MMM d, yyyy h:mm a")} · {batch.row_count} codes
+          </p>
+        </div>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid gap-4 sm:grid-cols-4 mb-6">
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground">Status</p>
+            <Badge variant={batch.status === "completed" ? "default" : "secondary"} className="mt-1">
+              {batch.status}
+            </Badge>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground">Template</p>
+            <p className="font-medium text-foreground mt-1">Avery 94107</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground">Total Codes</p>
+            <p className="font-medium text-foreground mt-1">{codes.length}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground">Active</p>
+            <p className="font-medium text-foreground mt-1">
+              {codes.filter((c) => c.status === "active").length}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Actions */}
+      <div className="flex flex-wrap gap-3 mb-6">
+        <Button variant="outline" onClick={handleDownloadCsv}>
+          <Download className="mr-2 h-4 w-4" /> Export CSV
+        </Button>
+      </div>
+
+      {/* Codes Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Batch: {id}</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg">QR Codes</CardTitle>
+            <div className="relative w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by ID or address…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">Batch detail view coming in Phase 3.</p>
+          <div className="max-h-[500px] overflow-y-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>HomesPassedID</TableHead>
+                  <TableHead>Address</TableHead>
+                  <TableHead>QR URL</TableHead>
+                  <TableHead>Status</TableHead>
+                  {role === "admin" && <TableHead className="text-right">Actions</TableHead>}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredCodes.map((code) => (
+                  <TableRow key={code.id}>
+                    <TableCell className="font-mono text-sm">{code.homes_passed_id}</TableCell>
+                    <TableCell className="text-sm">{code.address}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground font-mono">
+                      {settings.base_url}/HH/{code.homes_passed_id}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={code.status === "active" ? "default" : "destructive"}
+                      >
+                        {code.status}
+                      </Badge>
+                    </TableCell>
+                    {role === "admin" && (
+                      <TableCell className="text-right">
+                        {code.status === "active" && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-destructive"
+                            onClick={() => handleRevokeCode(code.id)}
+                          >
+                            Revoke
+                          </Button>
+                        )}
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))}
+                {filteredCodes.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={role === "admin" ? 5 : 4} className="text-center text-muted-foreground py-8">
+                      {search ? "No matching codes found." : "No codes in this batch."}
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </AppLayout>
