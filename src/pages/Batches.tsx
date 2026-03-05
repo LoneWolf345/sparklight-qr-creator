@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Plus, Trash2 } from "lucide-react";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 export default function Batches() {
+  const { role } = useAuth();
   const [batches, setBatches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,6 +27,16 @@ export default function Batches() {
         setLoading(false);
       });
   }, []);
+
+  const handleDelete = async (id: string, name: string) => {
+    const { error } = await supabase.from("qr_batches").delete().eq("id", id);
+    if (error) {
+      toast.error("Failed to delete community: " + error.message);
+    } else {
+      setBatches((prev) => prev.filter((b) => b.id !== id));
+      toast.success(`"${name}" deleted`);
+    }
+  };
 
   return (
     <AppLayout>
@@ -60,6 +74,7 @@ export default function Batches() {
                    <TableHead>Status</TableHead>
                    <TableHead>Rows</TableHead>
                    <TableHead>Created</TableHead>
+                   {role === "admin" && <TableHead className="text-right">Actions</TableHead>}
                  </TableRow>
               </TableHeader>
               <TableBody>
@@ -82,6 +97,34 @@ export default function Batches() {
                     <TableCell className="text-muted-foreground text-sm">
                       {format(new Date(b.created_at), "MMM d, yyyy h:mm a")}
                     </TableCell>
+                    {role === "admin" && (
+                      <TableCell className="text-right">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete "{b.name}"?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will permanently delete the community and all its QR codes. This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                onClick={() => handleDelete(b.id, b.name)}
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
