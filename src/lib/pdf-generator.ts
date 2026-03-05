@@ -363,12 +363,13 @@ export async function generatePreviewCanvas(
 
     const textCenterXPx = Math.round((labelXIn + layout.labelWidth / 2) * pxPerIn);
     const textStartYPx = Math.round((qrYIn + options.qrSizeInches + 0.08) * pxPerIn);
+    const ptToPx = (pt: number) => Math.max(1, Math.round((pt / 72) * pxPerIn));
 
     ctx.textAlign = "center";
     ctx.textBaseline = "alphabetic";
 
     ctx.fillStyle = "#282828";
-    ctx.font = `${Math.max(8, Math.round(6.5 * pxPerIn / 10))}px sans-serif`;
+    ctx.font = `${ptToPx(6.5)}px sans-serif`;
 
     const maxTextWidthPx = Math.round((layout.labelWidth - 0.16) * pxPerIn);
     const words = (record.address || "").split(/\s+/).filter(Boolean);
@@ -392,12 +393,12 @@ export async function generatePreviewCanvas(
     });
 
     ctx.fillStyle = "#787878";
-    ctx.font = `${Math.max(7, Math.round(5 * pxPerIn / 10))}px sans-serif`;
+    ctx.font = `${ptToPx(5)}px sans-serif`;
     const hpIdYPx = textStartYPx + lines.slice(0, 2).length * Math.round(0.1 * pxPerIn) + Math.round(0.04 * pxPerIn);
     ctx.fillText(`ID: ${record.homesPassedId}`, textCenterXPx, hpIdYPx);
 
     ctx.fillStyle = options.primaryColor;
-    ctx.font = `${Math.max(7, Math.round(5.5 * pxPerIn / 10))}px sans-serif`;
+    ctx.font = `${ptToPx(5.5)}px sans-serif`;
     ctx.fillText("Scan to get started", textCenterXPx, hpIdYPx + Math.round(0.09 * pxPerIn));
 
     labelIndex++;
