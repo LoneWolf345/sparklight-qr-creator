@@ -161,11 +161,44 @@ export default function BatchDetail() {
         </Card>
       </div>
 
-      {/* Actions */}
       <div className="flex flex-wrap gap-3 mb-6">
         <Button variant="outline" onClick={handleDownloadCsv}>
           <Download className="mr-2 h-4 w-4" /> Export CSV
         </Button>
+        {role === "admin" && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" className="text-destructive border-destructive/50 hover:bg-destructive/10">
+                <Trash2 className="mr-2 h-4 w-4" /> Delete Community
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete "{batch.name}"?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete the community and all its QR codes. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  onClick={async () => {
+                    const { error } = await supabase.from("qr_batches").delete().eq("id", batch.id);
+                    if (error) {
+                      toast.error("Failed to delete: " + error.message);
+                    } else {
+                      toast.success(`"${batch.name}" deleted`);
+                      navigate("/batches");
+                    }
+                  }}
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
       </div>
 
       {/* Codes Table */}
