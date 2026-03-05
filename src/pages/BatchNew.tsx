@@ -350,6 +350,12 @@ export default function BatchNew() {
         <FileUploadStep
           batchName={batchName}
           onBatchNameChange={setBatchName}
+          city={city}
+          onCityChange={setCity}
+          state={state}
+          onStateChange={setState}
+          market={market}
+          onMarketChange={setMarket}
           onFileLoaded={handleFileLoaded}
           error={fileError}
         />
