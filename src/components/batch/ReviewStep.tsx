@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, CheckCircle, FileText } from "lucide-react";
@@ -38,7 +38,7 @@ export function ReviewStep({
   const [loadingPreview, setLoadingPreview] = useState(true);
   const [previewError, setPreviewError] = useState<string | null>(null);
 
-  const validRecords = records.filter((r) => r.homesPassedId);
+  const validRecords = useMemo(() => records.filter((r) => r.homesPassedId), [records]);
   const errorWarnings = warnings.filter((w) => w.type === "missing_id");
   const otherWarnings = warnings.filter((w) => w.type !== "missing_id");
 
