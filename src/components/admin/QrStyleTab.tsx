@@ -522,7 +522,7 @@ export function QrStyleTab() {
           </CardHeader>
           <CardContent className="flex items-center justify-center">
             <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noopener noreferrer">
-              <div ref={previewRef} className="w-full max-w-[360px] rounded-lg overflow-hidden border border-border [&>svg]:w-full [&>svg]:h-auto cursor-pointer" />
+              <div ref={previewRef} className="w-full max-w-[360px] rounded-lg overflow-hidden border border-border [&>svg]:w-full [&>svg]:h-auto cursor-pointer [&_text[font-size='6']]:hidden [&_text[font-size='5']]:hidden" />
             </a>
           </CardContent>
         </Card>
