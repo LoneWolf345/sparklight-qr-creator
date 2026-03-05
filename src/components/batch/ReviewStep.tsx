@@ -36,6 +36,7 @@ export function ReviewStep({
 }: ReviewStepProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loadingPreview, setLoadingPreview] = useState(true);
+  const [previewError, setPreviewError] = useState<string | null>(null);
 
   const validRecords = records.filter((r) => r.homesPassedId);
   const errorWarnings = warnings.filter((w) => w.type === "missing_id");
