@@ -1,5 +1,6 @@
 import QRCodeStyling from "qr-code-styling";
 import QRBorderPlugin from "qr-border-plugin";
+import QRCode from "qrcode";
 import { jsPDF } from "jspdf";
 import type { MappedRecord } from "./batch-types";
 import { AVERY_94107 } from "./batch-types";
@@ -55,6 +56,18 @@ function hexToRgb(hex: string): [number, number, number] {
 
 async function renderQrToDataUrl(url: string, options: PdfOptions): Promise<string> {
   const sizePx = Math.round(options.qrSizeInches * 300);
+
+  const renderFallbackQr = async () => {
+    return QRCode.toDataURL(url, {
+      width: sizePx,
+      margin: 0,
+      errorCorrectionLevel: options.errorCorrection,
+      color: {
+        dark: options.qrDotColor || options.primaryColor,
+        light: options.qrBackgroundColor || "#FFFFFF",
+      },
+    });
+  };
   
   const qrOptions: any = {
     width: sizePx,
@@ -95,7 +108,8 @@ async function renderQrToDataUrl(url: string, options: PdfOptions): Promise<stri
   try {
     qrCode = new QRCodeStyling(qrOptions);
   } catch (err) {
-    throw new Error(`Failed to instantiate QRCodeStyling: ${err instanceof Error ? err.message : String(err)}`);
+    console.warn("QRCodeStyling init failed; falling back to basic QR renderer", err);
+    return renderFallbackQr();
   }
 
   // Apply border plugin if enabled
@@ -137,8 +151,18 @@ async function renderQrToDataUrl(url: string, options: PdfOptions): Promise<stri
     qrCode.applyExtension(QRBorderPlugin(extOpts));
   }
 
-  const rawData = await qrCode.getRawData("png");
-  if (!rawData) throw new Error("QRCodeStyling.getRawData('png') returned null — canvas context may be unavailable");
+  let rawData: Blob | Buffer | null;
+  try {
+    rawData = await qrCode.getRawData("png");
+  } catch (err) {
+    console.warn("QRCodeStyling render failed; falling back to basic QR renderer", err);
+    return renderFallbackQr();
+  }
+
+  if (!rawData) {
+    console.warn("QRCodeStyling returned null data; falling back to basic QR renderer");
+    return renderFallbackQr();
+  }
   
   // Handle both Blob and Buffer returns
   const blob: Blob = (rawData as any).arrayBuffer 

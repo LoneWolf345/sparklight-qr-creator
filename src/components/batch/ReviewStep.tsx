@@ -70,9 +70,28 @@ export function ReviewStep({
       if (!cancelled) setLoadingPreview(false);
     };
 
-    if (validRecords.length > 0) generate();
+    if (validRecords.length > 0) {
+      generate();
+    } else {
+      setPreviewUrl(null);
+      setPreviewError(null);
+      setLoadingPreview(false);
+    }
+
     return () => { cancelled = true; };
-  }, [validRecords.length, baseUrl, qrSizeInches, primaryColor, startRow, startCol]);
+  }, [
+    validRecords,
+    baseUrl,
+    qrSizeInches,
+    primaryColor,
+    errorCorrection,
+    quietZone,
+    xOffsetMm,
+    yOffsetMm,
+    startRow,
+    startCol,
+    logoDataUrl,
+  ]);
 
   return (
     <div className="space-y-6">
