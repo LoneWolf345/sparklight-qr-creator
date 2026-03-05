@@ -22,7 +22,17 @@ export type Database = {
           id: string
           logo_url: string | null
           primary_color: string
+          qr_background_color: string
+          qr_corner_dot_color: string
+          qr_corner_dot_type: string
+          qr_corner_square_color: string
+          qr_corner_square_type: string
+          qr_dot_color: string
+          qr_dot_type: string
           qr_error_correction: string
+          qr_image_margin: number
+          qr_image_size: number
+          qr_image_url: string | null
           qr_size_inches: number
           quiet_zone_modules: number
           secondary_color: string
@@ -37,7 +47,17 @@ export type Database = {
           id?: string
           logo_url?: string | null
           primary_color?: string
+          qr_background_color?: string
+          qr_corner_dot_color?: string
+          qr_corner_dot_type?: string
+          qr_corner_square_color?: string
+          qr_corner_square_type?: string
+          qr_dot_color?: string
+          qr_dot_type?: string
           qr_error_correction?: string
+          qr_image_margin?: number
+          qr_image_size?: number
+          qr_image_url?: string | null
           qr_size_inches?: number
           quiet_zone_modules?: number
           secondary_color?: string
@@ -52,7 +72,17 @@ export type Database = {
           id?: string
           logo_url?: string | null
           primary_color?: string
+          qr_background_color?: string
+          qr_corner_dot_color?: string
+          qr_corner_dot_type?: string
+          qr_corner_square_color?: string
+          qr_corner_square_type?: string
+          qr_dot_color?: string
+          qr_dot_type?: string
           qr_error_correction?: string
+          qr_image_margin?: number
+          qr_image_size?: number
+          qr_image_url?: string | null
           qr_size_inches?: number
           quiet_zone_modules?: number
           secondary_color?: string

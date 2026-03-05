@@ -46,7 +46,7 @@ export default function BatchNew() {
   const [batchId, setBatchId] = useState<string | null>(null);
 
   // Settings
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<any>({
     base_url: "https://go.sparklight.internal",
     qr_size_inches: 1.35,
     primary_color: "#7B2D8E",
@@ -55,6 +55,16 @@ export default function BatchNew() {
     quiet_zone_modules: 4,
     x_offset_mm: 0,
     y_offset_mm: 0,
+    qr_dot_type: "square",
+    qr_dot_color: "#000000",
+    qr_corner_square_type: "square",
+    qr_corner_square_color: "#000000",
+    qr_corner_dot_type: "square",
+    qr_corner_dot_color: "#000000",
+    qr_background_color: "#FFFFFF",
+    qr_image_url: null,
+    qr_image_size: 0.4,
+    qr_image_margin: 5,
   });
 
   // Logo data URL
@@ -77,6 +87,16 @@ export default function BatchNew() {
             quiet_zone_modules: Number(data.quiet_zone_modules),
             x_offset_mm: Number(data.x_offset_mm),
             y_offset_mm: Number(data.y_offset_mm),
+            qr_dot_type: (data as any).qr_dot_type || "square",
+            qr_dot_color: (data as any).qr_dot_color || "#000000",
+            qr_corner_square_type: (data as any).qr_corner_square_type || "square",
+            qr_corner_square_color: (data as any).qr_corner_square_color || "#000000",
+            qr_corner_dot_type: (data as any).qr_corner_dot_type || "square",
+            qr_corner_dot_color: (data as any).qr_corner_dot_color || "#000000",
+            qr_background_color: (data as any).qr_background_color || "#FFFFFF",
+            qr_image_url: (data as any).qr_image_url || null,
+            qr_image_size: Number((data as any).qr_image_size) || 0.4,
+            qr_image_margin: Number((data as any).qr_image_margin) || 5,
           });
         }
       });
@@ -185,6 +205,16 @@ export default function BatchNew() {
         startRow,
         startCol,
         logoDataUrl,
+        qrDotType: settings.qr_dot_type,
+        qrDotColor: settings.qr_dot_color,
+        qrCornerSquareType: settings.qr_corner_square_type,
+        qrCornerSquareColor: settings.qr_corner_square_color,
+        qrCornerDotType: settings.qr_corner_dot_type,
+        qrCornerDotColor: settings.qr_corner_dot_color,
+        qrBackgroundColor: settings.qr_background_color,
+        qrImageUrl: settings.qr_image_url,
+        qrImageSize: settings.qr_image_size,
+        qrImageMargin: settings.qr_image_margin,
       });
       setPdfBlob(blob);
 
