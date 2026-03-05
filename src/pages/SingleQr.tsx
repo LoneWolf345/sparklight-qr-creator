@@ -23,6 +23,7 @@ export default function SingleQr() {
   const [url, setUrl] = useState("");
   const [topText, setTopText] = useState("");
   const [bottomText, setBottomText] = useState("");
+  const [errorCorrection, setErrorCorrection] = useState("Q");
   const [initDone, setInitDone] = useState(false);
 
   const previewRef = useRef<HTMLDivElement>(null);
