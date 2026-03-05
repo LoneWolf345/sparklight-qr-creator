@@ -47,6 +47,7 @@ export function ReviewStep({
 
     const generate = async () => {
       setLoadingPreview(true);
+      setPreviewError(null);
       try {
         const url = await generatePreviewCanvas(validRecords, {
           baseUrl,
@@ -62,8 +63,9 @@ export function ReviewStep({
           logoDataUrl,
         }, 600);
         if (!cancelled) setPreviewUrl(url);
-      } catch {
-        // preview failed silently
+      } catch (err) {
+        console.error("Preview generation failed:", err);
+        if (!cancelled) setPreviewError(err instanceof Error ? err.message : String(err));
       }
       if (!cancelled) setLoadingPreview(false);
     };
