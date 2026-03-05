@@ -101,8 +101,8 @@ export function QrStyleTab() {
     if (!settings || !previewRef.current) return;
 
     const options: any = {
-      width: 220,
-      height: 220,
+      width: 360,
+      height: 360,
       type: "svg",
       data: "https://example.com/HH/SAMPLE123",
       dotsOptions: {
