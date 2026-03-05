@@ -243,16 +243,21 @@ export default function SingleQr() {
           <DialogHeader>
             <DialogTitle>Select Label Position</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-muted-foreground">Pick the cell on the Avery 94107 sheet where the label should print.</p>
+          <p className="text-sm text-muted-foreground">Pick the starting cell and how many labels to print.</p>
           <LabelStartPicker
             startRow={pdfStartRow}
             startCol={pdfStartCol}
             onSelect={(r, c) => { setPdfStartRow(r); setPdfStartCol(c); }}
           />
+          <div className="space-y-2">
+            <Label>Quantity</Label>
+            <Input type="number" min={1} max={120} value={quantity} onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))} />
+            <p className="text-xs text-muted-foreground">Number of labels to fill (spans multiple pages if needed)</p>
+          </div>
           <DialogFooter>
             <Button onClick={handlePdfGenerate} disabled={generating}>
               {generating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Generate PDF
+              Generate PDF ({quantity} label{quantity !== 1 ? "s" : ""})
             </Button>
           </DialogFooter>
         </DialogContent>
