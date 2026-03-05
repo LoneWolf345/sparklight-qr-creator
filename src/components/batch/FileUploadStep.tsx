@@ -47,7 +47,7 @@ export function FileUploadStep({
           id="batch-name"
           value={batchName}
           onChange={(e) => onBatchNameChange(e.target.value)}
-          placeholder="e.g., March 2026 Campaign – Phoenix"
+          placeholder="e.g., Shady Pines Retirement Village"
           className="max-w-md"
         />
       </div>
