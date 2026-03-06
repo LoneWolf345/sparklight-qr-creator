@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { ArrowLeft, Download, Search, Trash2, Printer } from "lucide-react";
+import { ArrowLeft, Download, Search, Trash2, Printer, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { ReprintDialog } from "@/components/batch/ReprintDialog";
@@ -129,14 +129,44 @@ export default function BatchDetail() {
     URL.revokeObjectURL(url);
   };
 
-  const handleRevokeCode = async (codeId: string) => {
+  const handleDeleteCode = async (codeId: string) => {
     const { error } = await supabase
       .from("qr_codes")
-      .update({ status: "revoked" })
+      .delete()
       .eq("id", codeId);
-    if (!error) {
-      setCodes(codes.map((c) => (c.id === codeId ? { ...c, status: "revoked" } : c)));
+    if (error) {
+      toast.error("Failed to delete: " + error.message);
+    } else {
+      setCodes(codes.filter((c) => c.id !== codeId));
+      toast.success("Address deleted");
     }
+  };
+
+  // Add new address
+  const [newHpid, setNewHpid] = useState("");
+  const [newAddress, setNewAddress] = useState("");
+  const [adding, setAdding] = useState(false);
+
+  const handleAddAddress = async () => {
+    if (!newHpid.trim() || !newAddress.trim() || !batch) return;
+    setAdding(true);
+    const { data, error } = await supabase
+      .from("qr_codes")
+      .insert({ batch_id: batch.id, homes_passed_id: newHpid.trim(), address: newAddress.trim() })
+      .select()
+      .single();
+    if (error) {
+      toast.error("Failed to add: " + error.message);
+    } else if (data) {
+      setCodes([...codes, data as QrCode]);
+      // Update batch row_count
+      await supabase.from("qr_batches").update({ row_count: codes.length + 1 }).eq("id", batch.id);
+      setBatch({ ...batch, row_count: batch.row_count + 1 });
+      setNewHpid("");
+      setNewAddress("");
+      toast.success("Address added");
+    }
+    setAdding(false);
   };
 
   if (loading) {
@@ -286,7 +316,7 @@ export default function BatchDetail() {
                   <TableHead>Address</TableHead>
                   <TableHead>QR URL</TableHead>
                   <TableHead>Status</TableHead>
-                  {role === "admin" && <TableHead className="text-right">Actions</TableHead>}
+                  {role && <TableHead className="text-right">Actions</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -311,26 +341,76 @@ export default function BatchDetail() {
                         {code.status}
                       </Badge>
                     </TableCell>
-                    {role === "admin" && (
+                    {role && (
                       <TableCell className="text-right">
-                        {code.status === "active" && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-destructive"
-                            onClick={() => handleRevokeCode(code.id)}
-                          >
-                            Revoke
-                          </Button>
-                        )}
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete this address?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will permanently remove {code.address || code.homes_passed_id} from this community.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                onClick={() => handleDeleteCode(code.id)}
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </TableCell>
                     )}
                   </TableRow>
                 ))}
                 {filteredCodes.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={role === "admin" ? 6 : 5} className="text-center text-muted-foreground py-8">
+                    <TableCell colSpan={role ? 6 : 5} className="text-center text-muted-foreground py-8">
                       {search ? "No matching codes found." : "No codes in this batch."}
+                    </TableCell>
+                  </TableRow>
+                )}
+                {/* Add new address row */}
+                {role && (
+                  <TableRow>
+                    <TableCell />
+                    <TableCell>
+                      <Input
+                        placeholder="HomesPassedID"
+                        value={newHpid}
+                        onChange={(e) => setNewHpid(e.target.value)}
+                        className="h-8 text-sm"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        placeholder="Address"
+                        value={newAddress}
+                        onChange={(e) => setNewAddress(e.target.value)}
+                        className="h-8 text-sm"
+                        onKeyDown={(e) => { if (e.key === "Enter") handleAddAddress(); }}
+                      />
+                    </TableCell>
+                    <TableCell />
+                    <TableCell />
+                    <TableCell className="text-right">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={handleAddAddress}
+                        disabled={adding || !newHpid.trim() || !newAddress.trim()}
+                        className="text-primary"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 )}
