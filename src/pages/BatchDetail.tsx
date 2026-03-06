@@ -346,7 +346,7 @@ export default function BatchDetail() {
                     <TableCell className="font-mono text-sm px-2">{code.homes_passed_id}</TableCell>
                     <TableCell className="text-sm px-2">{code.address}</TableCell>
                     {role && (
-                      <TableCell className="text-right">
+                      <TableCell className="text-right px-2">
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
