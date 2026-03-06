@@ -169,6 +169,9 @@ export default function BatchDetail() {
       setNewHpid("");
       setNewAddress("");
       toast.success("Address added");
+      if (user) {
+        logAudit({ action: "create", entityType: "address", entityId: (data as any).id, entityName: newAddress.trim(), details: { community_id: batch.id, community_name: batch.name, homes_passed_id: newHpid.trim() }, userId: user.id });
+      }
       setAddDialogOpen(false);
     }
     setAdding(false);
