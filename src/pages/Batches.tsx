@@ -37,6 +37,9 @@ export default function Batches() {
     } else {
       setBatches((prev) => prev.filter((b) => b.id !== id));
       toast.success(`"${name}" deleted`);
+      if (user) {
+        logAudit({ action: "delete", entityType: "community", entityId: id, entityName: name, userId: user.id });
+      }
     }
   };
 
