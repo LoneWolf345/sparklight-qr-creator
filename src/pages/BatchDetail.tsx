@@ -370,8 +370,6 @@ export default function BatchDetail() {
                         onKeyDown={(e) => { if (e.key === "Enter") handleAddAddress(); }}
                       />
                     </TableCell>
-                    <TableCell />
-                    <TableCell />
                     <TableCell className="text-right">
                       <Button
                         size="icon"
