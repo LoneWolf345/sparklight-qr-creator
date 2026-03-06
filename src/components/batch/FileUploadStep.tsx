@@ -1,8 +1,21 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Upload, FileSpreadsheet, AlertCircle } from "lucide-react";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Upload, FileSpreadsheet, AlertCircle, ChevronsUpDown, Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+const US_STATES = [
+  "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA",
+  "HI","ID","IL","IN","IA","KS","KY","LA","ME","MD",
+  "MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ",
+  "NM","NY","NC","ND","OH","OK","OR","PA","RI","SC",
+  "SD","TN","TX","UT","VT","VA","WA","WV","WI","WY",
+  "DC","PR","VI","GU","AS","MP",
+];
 
 interface FileUploadStepProps {
   batchName: string;
@@ -64,12 +77,38 @@ export function FileUploadStep({
         </div>
         <div className="space-y-2">
           <Label htmlFor="state">State <span className="text-destructive">*</span></Label>
-          <Input
-            id="state"
-            value={state}
-            onChange={(e) => onStateChange(e.target.value)}
-            placeholder="e.g., AZ"
-          />
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                className={cn("w-full justify-between font-normal", !state && "text-muted-foreground")}
+              >
+                {state || "Select state…"}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[200px] p-0">
+              <Command>
+                <CommandInput placeholder="Search states…" />
+                <CommandList>
+                  <CommandEmpty>No state found.</CommandEmpty>
+                  <CommandGroup>
+                    {US_STATES.map((s) => (
+                      <CommandItem
+                        key={s}
+                        value={s}
+                        onSelect={(val) => onStateChange(val.toUpperCase())}
+                      >
+                        <Check className={cn("mr-2 h-4 w-4", state === s ? "opacity-100" : "opacity-0")} />
+                        {s}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </div>
         <div className="space-y-2">
           <Label htmlFor="market">Market <span className="text-destructive">*</span></Label>
