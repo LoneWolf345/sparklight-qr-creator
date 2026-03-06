@@ -1,12 +1,13 @@
-import { useCallback, useState, useRef, useEffect } from "react";
+import { useCallback, useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Upload, FileSpreadsheet, AlertCircle, ChevronsUpDown, Check } from "lucide-react";
+import { Upload, FileSpreadsheet, AlertCircle, ChevronsUpDown, Check, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { isCityInState, getCitiesForState } from "@/data/us-cities";
 
 const US_STATES = [
   "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA",
@@ -39,6 +40,15 @@ export function FileUploadStep({
 }: FileUploadStepProps) {
   const [dragOver, setDragOver] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [cityOpen, setCityOpen] = useState(false);
+
+  const cityWarning = useMemo(() => {
+    if (!city || !state) return null;
+    if (!isCityInState(city, state)) {
+      return `"${city}" not found in ${state}. Please double-check the spelling.`;
+    }
+    return null;
+  }, [city, state]);
 
   const handleFile = useCallback(
     (file: File) => {
@@ -68,12 +78,56 @@ export function FileUploadStep({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="space-y-2">
           <Label htmlFor="city">City <span className="text-destructive">*</span></Label>
-          <Input
-            id="city"
-            value={city}
-            onChange={(e) => onCityChange(e.target.value)}
-            placeholder="e.g., Phoenix"
-          />
+          <Popover open={cityOpen} onOpenChange={setCityOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                className={cn("w-full justify-between font-normal", !city && "text-muted-foreground")}
+              >
+                {city || "Select or type city…"}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[250px] p-0">
+              <Command>
+                <CommandInput
+                  placeholder="Search cities…"
+                  onValueChange={(val) => {
+                    onCityChange(val);
+                  }}
+                />
+                <CommandList>
+                  <CommandEmpty>
+                    {state ? "No matching city found." : "Select a state first."}
+                  </CommandEmpty>
+                  {state && (
+                    <CommandGroup>
+                      {getCitiesForState(state, city).slice(0, 50).map((c) => (
+                        <CommandItem
+                          key={c}
+                          value={c}
+                          onSelect={(val) => {
+                            onCityChange(val);
+                            setCityOpen(false);
+                          }}
+                        >
+                          <Check className={cn("mr-2 h-4 w-4", city?.toLowerCase() === c.toLowerCase() ? "opacity-100" : "opacity-0")} />
+                          {c}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  )}
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+          {cityWarning && (
+            <div className="flex items-center gap-1.5 text-amber-600 text-xs mt-1">
+              <AlertTriangle className="h-3.5 w-3.5" />
+              {cityWarning}
+            </div>
+          )}
         </div>
         <div className="space-y-2">
           <Label htmlFor="state">State <span className="text-destructive">*</span></Label>
