@@ -9,6 +9,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { ArrowLeft, Download, Search, Trash2, Printer, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -143,6 +145,7 @@ export default function BatchDetail() {
   const [newHpid, setNewHpid] = useState("");
   const [newAddress, setNewAddress] = useState("");
   const [adding, setAdding] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
 
   const handleAddAddress = async () => {
     if (!newHpid.trim() || !newAddress.trim() || !batch) return;
@@ -162,6 +165,7 @@ export default function BatchDetail() {
       setNewHpid("");
       setNewAddress("");
       toast.success("Address added");
+      setAddDialogOpen(false);
     }
     setAdding(false);
   };
@@ -229,6 +233,37 @@ export default function BatchDetail() {
         >
           <Printer className="mr-2 h-4 w-4" /> Reprint Selected ({selectedIds.size})
         </Button>
+        {role && (
+          <>
+            <Button variant="outline" onClick={() => setAddDialogOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" /> Add Address
+            </Button>
+            <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Add New Address</DialogTitle>
+                  <DialogDescription>Enter the HomesPassedID and address to add to this community.</DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="dialog-hpid">HomesPassedID</Label>
+                    <Input id="dialog-hpid" value={newHpid} onChange={(e) => setNewHpid(e.target.value)} placeholder="e.g., 1001" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="dialog-address">Address</Label>
+                    <Input id="dialog-address" value={newAddress} onChange={(e) => setNewAddress(e.target.value)} placeholder="e.g., 123 Main St" onKeyDown={(e) => { if (e.key === "Enter") handleAddAddress(); }} />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setAddDialogOpen(false)} disabled={adding}>Cancel</Button>
+                  <Button onClick={handleAddAddress} disabled={adding || !newHpid.trim() || !newAddress.trim()}>
+                    {adding ? "Adding…" : "Add"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </>
+        )}
         {role === "admin" && (
           <AlertDialog>
             <AlertDialogTrigger asChild>
