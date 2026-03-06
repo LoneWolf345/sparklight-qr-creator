@@ -45,7 +45,7 @@ export default function BatchDetail() {
   const [codes, setCodes] = useState<QrCode[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [settings, setSettings] = useState({ base_url: "" });
+  const [settings, setSettings] = useState({ default_destination_url: "" });
 
   // Selection state
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
