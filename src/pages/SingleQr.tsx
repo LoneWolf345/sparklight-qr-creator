@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { LabelStartPicker } from "@/components/batch/LabelStartPicker";
 import { toast } from "sonner";
-import { ClipboardCopy, Download, FileImage, FileText, Loader2 } from "lucide-react";
+import { Check, ClipboardCopy, Download, FileImage, FileText, Loader2 } from "lucide-react";
 import QRCodeStyling from "qr-code-styling";
 import QRBorderPlugin from "qr-border-plugin";
 import { jsPDF } from "jspdf";
@@ -35,6 +35,7 @@ export default function SingleQr() {
   const [pdfStartCol, setPdfStartCol] = useState(0);
   const [generating, setGenerating] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -112,17 +113,19 @@ export default function SingleQr() {
     });
   }, [settings, url, topText, bottomText, errorCorrection, initDone]);
 
-  const handleCopyToClipboard = async () => {
+  const handleCopyToClipboard = useCallback(async () => {
     if (!qrRef.current) return;
     try {
       const blob = await qrRef.current.getRawData("png") as Blob;
       if (!blob) throw new Error("No data");
       await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+      setCopied(true);
       toast.success("QR code copied to clipboard");
+      setTimeout(() => setCopied(false), 2000);
     } catch {
       toast.error("Copy failed – try downloading instead");
     }
-  };
+  }, []);
 
   const handleDownload = async (type: "png" | "svg") => {
     if (!qrRef.current) return;
@@ -265,9 +268,9 @@ export default function SingleQr() {
               className="border rounded-lg bg-background p-4 [&_svg_.qr-border-plugin-trial]:hidden"
             />
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" size="sm" onClick={handleCopyToClipboard} disabled={!url}>
-                <ClipboardCopy className="mr-2 h-4 w-4" />
-                Copy
+              <Button variant={copied ? "default" : "outline"} size="sm" onClick={handleCopyToClipboard} disabled={!url}>
+                {copied ? <Check className="mr-2 h-4 w-4 animate-scale-in" /> : <ClipboardCopy className="mr-2 h-4 w-4" />}
+                {copied ? "Copied!" : "Copy"}
               </Button>
               <Button variant="outline" size="sm" onClick={() => handleDownload("png")} disabled={!url}>
                 <FileImage className="mr-2 h-4 w-4" />
