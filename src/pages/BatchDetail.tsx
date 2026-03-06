@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { ArrowLeft, Download, Search, Trash2, Printer } from "lucide-react";
+import { ArrowLeft, Download, Search, Trash2, Printer, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { ReprintDialog } from "@/components/batch/ReprintDialog";
