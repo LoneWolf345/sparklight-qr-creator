@@ -24,7 +24,7 @@ interface ReprintDialogProps {
   destinationUrlOverride?: string | null;
 }
 
-export function ReprintDialog({ open, onOpenChange, codes, batchName }: ReprintDialogProps) {
+export function ReprintDialog({ open, onOpenChange, codes, batchName, destinationUrlOverride }: ReprintDialogProps) {
   const [startRow, setStartRow] = useState(0);
   const [startCol, setStartCol] = useState(0);
   const [generating, setGenerating] = useState(false);
