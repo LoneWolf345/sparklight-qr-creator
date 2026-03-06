@@ -371,7 +371,7 @@ export default function BatchDetail() {
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
                               <AlertDialogAction
                                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                onClick={() => handleDeleteCode(code.id)}
+                                onClick={() => handleDeleteCode(code.id, code.address || code.homes_passed_id)}
                               >
                                 Delete
                               </AlertDialogAction>
