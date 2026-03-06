@@ -13,7 +13,6 @@ interface QrCode {
   id: string;
   homes_passed_id: string;
   address: string;
-  status: string;
 }
 
 interface ReprintDialogProps {

@@ -6,7 +6,6 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -19,14 +18,12 @@ interface QrCode {
   id: string;
   homes_passed_id: string;
   address: string;
-  status: string;
   created_at: string;
 }
 
 interface Batch {
   id: string;
   name: string;
-  status: string;
   row_count: number;
   template: string;
   created_at: string;
@@ -68,7 +65,7 @@ export default function BatchDetail() {
     });
   }, [id]);
 
-  const activeCodes = codes.filter((c) => c.status === "active");
+  
 
   const filteredCodes = codes.filter(
     (c) =>
@@ -98,7 +95,7 @@ export default function BatchDetail() {
   };
 
   const handleReprintAll = () => {
-    setReprintCodes(activeCodes);
+    setReprintCodes(codes);
     setReprintOpen(true);
   };
 
@@ -112,11 +109,11 @@ export default function BatchDetail() {
     if (!batch) return;
     const destUrl = batch.destination_url_override || settings.default_destination_url || "https://www.sparklight.com";
     const rows = [
-      ["HomesPassedID", "Address", "QR_URL", "Status"],
+      ["HomesPassedID", "Address", "QR_URL"],
       ...codes.map((c) => {
         const u = new URL(destUrl);
         u.searchParams.set("hpid", c.homes_passed_id);
-        return [c.homes_passed_id, c.address, u.toString(), c.status];
+        return [c.homes_passed_id, c.address, u.toString()];
       }),
     ];
     const csv = rows.map((r) => r.map((c) => `"${c.replace(/"/g, '""')}"`).join(",")).join("\n");
@@ -203,15 +200,7 @@ export default function BatchDetail() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid gap-4 sm:grid-cols-4 mb-6">
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground">Status</p>
-            <Badge variant={batch.status === "completed" ? "default" : "secondary"} className="mt-1">
-              {batch.status}
-            </Badge>
-          </CardContent>
-        </Card>
+      <div className="grid gap-4 sm:grid-cols-2 mb-6">
         <Card>
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground">Template</p>
@@ -224,21 +213,13 @@ export default function BatchDetail() {
             <p className="font-medium text-foreground mt-1">{codes.length}</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground">Active</p>
-            <p className="font-medium text-foreground mt-1">
-              {activeCodes.length}
-            </p>
-          </CardContent>
-        </Card>
       </div>
 
       <div className="flex flex-wrap gap-3 mb-6">
         <Button variant="outline" onClick={handleDownloadCsv}>
           <Download className="mr-2 h-4 w-4" /> Export CSV
         </Button>
-        <Button onClick={handleReprintAll} disabled={activeCodes.length === 0}>
+        <Button onClick={handleReprintAll} disabled={codes.length === 0}>
           <Printer className="mr-2 h-4 w-4" /> Reprint All
         </Button>
         <Button
@@ -314,8 +295,6 @@ export default function BatchDetail() {
                   </TableHead>
                   <TableHead>HomesPassedID</TableHead>
                   <TableHead>Address</TableHead>
-                  <TableHead>QR URL</TableHead>
-                  <TableHead>Status</TableHead>
                   {role && <TableHead className="text-right">Actions</TableHead>}
                 </TableRow>
               </TableHeader>
@@ -331,16 +310,6 @@ export default function BatchDetail() {
                     </TableCell>
                     <TableCell className="font-mono text-sm">{code.homes_passed_id}</TableCell>
                     <TableCell className="text-sm">{code.address}</TableCell>
-                    <TableCell className="text-xs text-muted-foreground font-mono">
-                      {(() => { const u = new URL(batch.destination_url_override || settings.default_destination_url || "https://www.sparklight.com"); u.searchParams.set("hpid", code.homes_passed_id); return u.toString(); })()}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={code.status === "active" ? "default" : "destructive"}
-                      >
-                        {code.status}
-                      </Badge>
-                    </TableCell>
                     {role && (
                       <TableCell className="text-right">
                         <AlertDialog>
@@ -373,7 +342,7 @@ export default function BatchDetail() {
                 ))}
                 {filteredCodes.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={role ? 6 : 5} className="text-center text-muted-foreground py-8">
+                    <TableCell colSpan={role ? 4 : 3} className="text-center text-muted-foreground py-8">
                       {search ? "No matching codes found." : "No codes in this batch."}
                     </TableCell>
                   </TableRow>
@@ -399,8 +368,6 @@ export default function BatchDetail() {
                         onKeyDown={(e) => { if (e.key === "Enter") handleAddAddress(); }}
                       />
                     </TableCell>
-                    <TableCell />
-                    <TableCell />
                     <TableCell className="text-right">
                       <Button
                         size="icon"
