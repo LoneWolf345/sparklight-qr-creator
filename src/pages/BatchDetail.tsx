@@ -345,6 +345,7 @@ export default function BatchDetail() {
         onOpenChange={setReprintOpen}
         codes={reprintCodes}
         batchName={batch.name}
+        destinationUrlOverride={batch.destination_url_override}
       />
     </AppLayout>
   );
