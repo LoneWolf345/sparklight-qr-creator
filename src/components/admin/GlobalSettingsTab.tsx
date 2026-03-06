@@ -56,7 +56,6 @@ export function GlobalSettingsTab() {
     const { error } = await supabase
       .from("app_settings")
       .update({
-        base_url: settings.base_url,
         default_destination_url: settings.default_destination_url,
         primary_color: settings.primary_color,
         secondary_color: settings.secondary_color,
