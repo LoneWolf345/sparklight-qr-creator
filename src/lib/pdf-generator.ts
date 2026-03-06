@@ -180,7 +180,7 @@ export async function generatePdf(
   options: PdfOptions
 ): Promise<Blob> {
   const {
-    baseUrl,
+    destinationUrl,
     qrSizeInches,
     xOffsetMm,
     yOffsetMm,
