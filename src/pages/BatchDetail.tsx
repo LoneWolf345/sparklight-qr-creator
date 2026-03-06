@@ -202,15 +202,7 @@ export default function BatchDetail() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid gap-4 sm:grid-cols-4 mb-6">
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground">Status</p>
-            <Badge variant={batch.status === "completed" ? "default" : "secondary"} className="mt-1">
-              {batch.status}
-            </Badge>
-          </CardContent>
-        </Card>
+      <div className="grid gap-4 sm:grid-cols-2 mb-6">
         <Card>
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground">Template</p>
@@ -221,14 +213,6 @@ export default function BatchDetail() {
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground">Total Codes</p>
             <p className="font-medium text-foreground mt-1">{codes.length}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground">Active</p>
-            <p className="font-medium text-foreground mt-1">
-              {activeCodes.length}
-            </p>
           </CardContent>
         </Card>
       </div>
