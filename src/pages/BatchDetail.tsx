@@ -264,6 +264,7 @@ export default function BatchDetail() {
             </Dialog>
           </>
         )}
+        {role === "admin" && (
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="outline" className="text-destructive border-destructive/50 hover:bg-destructive/10">
