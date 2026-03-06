@@ -19,10 +19,13 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 
-const navItems = [
+const publicNavItems = [
   { title: "Single QR Code", url: "/single-qr", icon: QrCode },
-  { title: "New Community", url: "/batches/new", icon: Plus },
   { title: "Communities", url: "/batches", icon: Layers },
+];
+
+const authNavItems = [
+  { title: "New Community", url: "/batches/new", icon: Plus },
 ];
 
 const adminItems = [
