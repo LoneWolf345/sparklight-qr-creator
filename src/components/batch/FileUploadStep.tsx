@@ -134,6 +134,7 @@ export function FileUploadStep({
           <Popover open={cityOpen} onOpenChange={setCityOpen}>
             <PopoverTrigger asChild>
               <Button
+                ref={cityTriggerRef}
                 variant="outline"
                 role="combobox"
                 className={cn("w-full justify-between font-normal", !city && "text-muted-foreground")}
