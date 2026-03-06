@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { LabelStartPicker } from "@/components/batch/LabelStartPicker";
 import { toast } from "sonner";
-import { Download, FileImage, FileText, Loader2 } from "lucide-react";
+import { ClipboardCopy, Download, FileImage, FileText, Loader2 } from "lucide-react";
 import QRCodeStyling from "qr-code-styling";
 import QRBorderPlugin from "qr-border-plugin";
 import { jsPDF } from "jspdf";
