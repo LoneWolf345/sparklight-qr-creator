@@ -4,8 +4,7 @@ import { GlobalSettingsTab } from "@/components/admin/GlobalSettingsTab";
 import { QrStyleTab } from "@/components/admin/QrStyleTab";
 import { UserManagementTab } from "@/components/admin/UserManagementTab";
 import { AuditLogTab } from "@/components/admin/AuditLogTab";
-import { ScanLogTab } from "@/components/admin/ScanLogTab";
-import { Settings, Users, FileText, Activity, QrCode } from "lucide-react";
+import { Settings, Users, FileText, QrCode } from "lucide-react";
 
 export default function Admin() {
   return (
