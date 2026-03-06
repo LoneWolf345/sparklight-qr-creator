@@ -343,8 +343,8 @@ export default function BatchDetail() {
                         aria-label={`Select ${code.address}`}
                       />
                     </TableCell>
-                    <TableCell className="font-mono text-sm">{code.homes_passed_id}</TableCell>
-                    <TableCell className="text-sm">{code.address}</TableCell>
+                    <TableCell className="font-mono text-sm px-2">{code.homes_passed_id}</TableCell>
+                    <TableCell className="text-sm px-2">{code.address}</TableCell>
                     {role && (
                       <TableCell className="text-right">
                         <AlertDialog>
