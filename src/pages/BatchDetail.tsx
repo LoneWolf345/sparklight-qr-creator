@@ -301,8 +301,8 @@ export default function BatchDetail() {
       </div>
 
       {/* Codes Table */}
-      <Card>
-        <CardHeader>
+      <Card className="flex flex-col min-h-0 flex-1">
+        <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">QR Codes</CardTitle>
             <div className="relative w-64">
@@ -316,9 +316,9 @@ export default function BatchDetail() {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="max-h-[500px] overflow-y-auto">
-            <Table>
+        <CardContent className="flex-1 overflow-hidden p-0">
+          <div className="overflow-y-auto h-full max-h-[calc(100vh-380px)]">
+            <Table className="table-auto">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-10">
