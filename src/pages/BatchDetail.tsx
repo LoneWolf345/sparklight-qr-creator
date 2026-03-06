@@ -221,7 +221,7 @@ export default function BatchDetail() {
         <Button variant="outline" onClick={handleDownloadCsv}>
           <Download className="mr-2 h-4 w-4" /> Export CSV
         </Button>
-        <Button onClick={handleReprintAll} disabled={activeCodes.length === 0}>
+        <Button onClick={handleReprintAll} disabled={codes.length === 0}>
           <Printer className="mr-2 h-4 w-4" /> Reprint All
         </Button>
         <Button
