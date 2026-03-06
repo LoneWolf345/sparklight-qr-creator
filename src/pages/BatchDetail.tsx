@@ -111,11 +111,11 @@ export default function BatchDetail() {
     if (!batch) return;
     const destUrl = batch.destination_url_override || settings.default_destination_url || "https://www.sparklight.com";
     const rows = [
-      ["HomesPassedID", "Address", "QR_URL", "Status"],
+      ["HomesPassedID", "Address", "QR_URL"],
       ...codes.map((c) => {
         const u = new URL(destUrl);
         u.searchParams.set("hpid", c.homes_passed_id);
-        return [c.homes_passed_id, c.address, u.toString(), c.status];
+        return [c.homes_passed_id, c.address, u.toString()];
       }),
     ];
     const csv = rows.map((r) => r.map((c) => `"${c.replace(/"/g, '""')}"`).join(",")).join("\n");
