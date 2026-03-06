@@ -19,7 +19,6 @@ interface QrCode {
   id: string;
   homes_passed_id: string;
   address: string;
-  status: string;
   created_at: string;
 }
 
