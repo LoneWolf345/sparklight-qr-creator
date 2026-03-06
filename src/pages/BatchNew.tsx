@@ -99,6 +99,7 @@ export default function BatchNew() {
         if (data) {
           setSettings({
             base_url: data.base_url,
+            default_destination_url: data.default_destination_url,
             qr_size_inches: Number(data.qr_size_inches),
             primary_color: data.primary_color,
             secondary_color: data.secondary_color,
