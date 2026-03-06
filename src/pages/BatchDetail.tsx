@@ -336,7 +336,7 @@ export default function BatchDetail() {
               <TableBody>
                 {filteredCodes.map((code) => (
                   <TableRow key={code.id}>
-                    <TableCell className="px-2">
+                    <TableCell className="px-2 py-1.5">
                       <Checkbox
                         checked={selectedIds.has(code.id)}
                         onCheckedChange={() => toggleSelect(code.id)}
