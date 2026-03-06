@@ -1,4 +1,4 @@
-import { useCallback, useState, useMemo } from "react";
+import { useCallback, useState, useMemo, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
@@ -40,7 +40,9 @@ export function FileUploadStep({
 }: FileUploadStepProps) {
   const [dragOver, setDragOver] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [stateOpen, setStateOpen] = useState(false);
   const [cityOpen, setCityOpen] = useState(false);
+  const cityTriggerRef = useRef<HTMLButtonElement>(null);
 
   const cityWarning = useMemo(() => {
     if (!city || !state) return null;
@@ -78,7 +80,7 @@ export function FileUploadStep({
       <div className="grid grid-cols-1 sm:grid-cols-[100px_1fr_1fr] gap-4">
         <div className="space-y-2">
           <Label htmlFor="state">State <span className="text-destructive">*</span></Label>
-          <Popover>
+          <Popover open={stateOpen} onOpenChange={setStateOpen}>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
@@ -89,8 +91,21 @@ export function FileUploadStep({
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[140px] p-0">
-              <Command>
+            <PopoverContent className="w-[140px] p-0" onOpenAutoFocus={(e) => e.preventDefault()}>
+              <Command
+                onKeyDown={(e) => {
+                  if (e.key === "Tab") {
+                    e.preventDefault();
+                    // Select the first visible item if nothing selected yet
+                    const highlighted = (e.currentTarget as HTMLElement).querySelector('[data-selected="true"]');
+                    if (highlighted) {
+                      (highlighted as HTMLElement).click();
+                    }
+                    setStateOpen(false);
+                    setTimeout(() => cityTriggerRef.current?.click(), 0);
+                  }
+                }}
+              >
                 <CommandInput placeholder="Search…" />
                 <CommandList>
                   <CommandEmpty>No state found.</CommandEmpty>
@@ -99,7 +114,10 @@ export function FileUploadStep({
                       <CommandItem
                         key={s}
                         value={s}
-                        onSelect={(val) => onStateChange(val.toUpperCase())}
+                        onSelect={(val) => {
+                          onStateChange(val.toUpperCase());
+                          setStateOpen(false);
+                        }}
                       >
                         <Check className={cn("mr-2 h-4 w-4", state === s ? "opacity-100" : "opacity-0")} />
                         {s}
@@ -116,6 +134,7 @@ export function FileUploadStep({
           <Popover open={cityOpen} onOpenChange={setCityOpen}>
             <PopoverTrigger asChild>
               <Button
+                ref={cityTriggerRef}
                 variant="outline"
                 role="combobox"
                 className={cn("w-full justify-between font-normal", !city && "text-muted-foreground")}
