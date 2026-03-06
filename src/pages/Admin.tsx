@@ -24,9 +24,6 @@ export default function Admin() {
           <TabsTrigger value="audit" className="gap-2">
             <FileText className="h-4 w-4" /> Audit Log
           </TabsTrigger>
-          <TabsTrigger value="scans" className="gap-2">
-            <Activity className="h-4 w-4" /> Scan Log
-          </TabsTrigger>
         </TabsList>
         <TabsContent value="settings">
           <GlobalSettingsTab />
@@ -39,9 +36,6 @@ export default function Admin() {
         </TabsContent>
         <TabsContent value="audit">
           <AuditLogTab />
-        </TabsContent>
-        <TabsContent value="scans">
-          <ScanLogTab />
         </TabsContent>
       </Tabs>
     </AppLayout>

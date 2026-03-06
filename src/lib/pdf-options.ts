@@ -42,7 +42,7 @@ export function buildPdfOptions(
   logoDataUrl?: string,
 ) {
   return {
-    baseUrl: s.base_url,
+    destinationUrl: s.default_destination_url,
     qrSizeInches: s.qr_size_inches,
     primaryColor: s.primary_color,
     secondaryColor: s.secondary_color,

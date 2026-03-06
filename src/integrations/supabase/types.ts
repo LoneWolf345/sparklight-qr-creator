@@ -244,33 +244,6 @@ export type Database = {
           },
         ]
       }
-      qr_scans: {
-        Row: {
-          homes_passed_id: string
-          id: string
-          ip_address: string | null
-          referer: string | null
-          scanned_at: string
-          user_agent: string | null
-        }
-        Insert: {
-          homes_passed_id: string
-          id?: string
-          ip_address?: string | null
-          referer?: string | null
-          scanned_at?: string
-          user_agent?: string | null
-        }
-        Update: {
-          homes_passed_id?: string
-          id?: string
-          ip_address?: string | null
-          referer?: string | null
-          scanned_at?: string
-          user_agent?: string | null
-        }
-        Relationships: []
-      }
       user_roles: {
         Row: {
           id: string

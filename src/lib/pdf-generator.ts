@@ -272,9 +272,10 @@ export async function generatePreviewCanvas(
     const labelXIn = layout.marginLeft + col * (layout.labelWidth + layout.colGap) + xOffsetIn;
     const labelYIn = layout.marginTop + row * (layout.labelHeight + layout.rowGap) + yOffsetIn;
 
-    // Generate QR with per-record address as bottom border text
-    const qrUrl = `${options.baseUrl}/HH/${record.homesPassedId}`;
-    const qrDataUrl = await renderQrToDataUrl(qrUrl, options, record.address);
+    // Generate QR with destination URL + hpid param
+    const destUrl = new URL(options.destinationUrl);
+    destUrl.searchParams.set("hpid", record.homesPassedId);
+    const qrDataUrl = await renderQrToDataUrl(destUrl.toString(), options, record.address);
 
     // Center QR within label
     const qrXIn = labelXIn + (layout.labelWidth - options.qrSizeInches) / 2;
