@@ -232,8 +232,11 @@ export default function BatchNew() {
         if (codesError) throw codesError;
       }
 
-      // 3. Generate PDF
-      const pdfOptions = buildPdfOptions(settings, startRow, startCol, logoDataUrl);
+      // 3. Generate PDF — use destination override if set
+      const effectiveSettings = destinationOverride
+        ? { ...settings, default_destination_url: destinationOverride }
+        : settings;
+      const pdfOptions = buildPdfOptions(effectiveSettings, startRow, startCol, logoDataUrl);
       const blob = await generatePdf(validRecords, pdfOptions);
       setPdfBlob(blob);
 
