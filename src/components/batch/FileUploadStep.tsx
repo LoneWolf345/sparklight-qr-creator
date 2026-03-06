@@ -219,6 +219,25 @@ export function FileUploadStep({
         </CardContent>
       </Card>
 
+      <button
+        type="button"
+        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
+        onClick={(e) => {
+          e.stopPropagation();
+          const csv = "HomesPassedID,Address\n1001,123 Main St\n1002,456 Oak Ave\n1003,789 Pine Rd\n";
+          const blob = new Blob([csv], { type: "text/csv" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "qr_import_template.csv";
+          a.click();
+          URL.revokeObjectURL(url);
+        }}
+      >
+        <FileSpreadsheet className="h-3.5 w-3.5" />
+        Download CSV template
+      </button>
+
       {error && (
         <div className="flex items-center gap-2 text-destructive text-sm">
           <AlertCircle className="h-4 w-4" />
