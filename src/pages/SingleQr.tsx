@@ -113,17 +113,19 @@ export default function SingleQr() {
     });
   }, [settings, url, topText, bottomText, errorCorrection, initDone]);
 
-  const handleCopyToClipboard = async () => {
+  const handleCopyToClipboard = useCallback(async () => {
     if (!qrRef.current) return;
     try {
       const blob = await qrRef.current.getRawData("png") as Blob;
       if (!blob) throw new Error("No data");
       await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+      setCopied(true);
       toast.success("QR code copied to clipboard");
+      setTimeout(() => setCopied(false), 2000);
     } catch {
       toast.error("Copy failed – try downloading instead");
     }
-  };
+  }, []);
 
   const handleDownload = async (type: "png" | "svg") => {
     if (!qrRef.current) return;
