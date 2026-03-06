@@ -45,7 +45,7 @@ export default function BatchDetail() {
   const [codes, setCodes] = useState<QrCode[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [settings, setSettings] = useState({ base_url: "" });
+  const [settings, setSettings] = useState({ default_destination_url: "" });
 
   // Selection state
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -59,11 +59,11 @@ export default function BatchDetail() {
     Promise.all([
       supabase.from("qr_batches").select("*").eq("id", id).single(),
       supabase.from("qr_codes").select("*").eq("batch_id", id).order("created_at"),
-      supabase.from("app_settings").select("base_url").limit(1).single(),
+      supabase.from("app_settings").select("default_destination_url").limit(1).single(),
     ]).then(([batchRes, codesRes, settingsRes]) => {
       setBatch(batchRes.data as Batch);
       setCodes((codesRes.data as QrCode[]) ?? []);
-      if (settingsRes.data) setSettings({ base_url: settingsRes.data.base_url });
+      if (settingsRes.data) setSettings({ default_destination_url: settingsRes.data.default_destination_url });
       setLoading(false);
     });
   }, [id]);
@@ -110,14 +110,14 @@ export default function BatchDetail() {
 
   const handleDownloadCsv = () => {
     if (!batch) return;
+    const destUrl = batch.destination_url_override || settings.default_destination_url || "https://www.sparklight.com";
     const rows = [
       ["HomesPassedID", "Address", "QR_URL", "Status"],
-      ...codes.map((c) => [
-        c.homes_passed_id,
-        c.address,
-        `${settings.base_url}/HH/${c.homes_passed_id}`,
-        c.status,
-      ]),
+      ...codes.map((c) => {
+        const u = new URL(destUrl);
+        u.searchParams.set("hpid", c.homes_passed_id);
+        return [c.homes_passed_id, c.address, u.toString(), c.status];
+      }),
     ];
     const csv = rows.map((r) => r.map((c) => `"${c.replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -302,7 +302,7 @@ export default function BatchDetail() {
                     <TableCell className="font-mono text-sm">{code.homes_passed_id}</TableCell>
                     <TableCell className="text-sm">{code.address}</TableCell>
                     <TableCell className="text-xs text-muted-foreground font-mono">
-                      {settings.base_url}/HH/{code.homes_passed_id}
+                      {(() => { const u = new URL(batch.destination_url_override || settings.default_destination_url || "https://www.sparklight.com"); u.searchParams.set("hpid", code.homes_passed_id); return u.toString(); })()}
                     </TableCell>
                     <TableCell>
                       <Badge
@@ -345,6 +345,7 @@ export default function BatchDetail() {
         onOpenChange={setReprintOpen}
         codes={reprintCodes}
         batchName={batch.name}
+        destinationUrlOverride={batch.destination_url_override}
       />
     </AppLayout>
   );

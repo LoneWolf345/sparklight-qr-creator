@@ -51,7 +51,7 @@ export default function BatchNew() {
 
   // Settings
   const [settings, setSettings] = useState<any>({
-    base_url: "https://go.sparklight.internal",
+    default_destination_url: "https://www.sparklight.com",
     qr_size_inches: 1.35,
     primary_color: "#7B2D8E",
     secondary_color: "#54585A",
@@ -97,7 +97,7 @@ export default function BatchNew() {
       .then(({ data }) => {
         if (data) {
           setSettings({
-            base_url: data.base_url,
+            default_destination_url: data.default_destination_url,
             qr_size_inches: Number(data.qr_size_inches),
             primary_color: data.primary_color,
             secondary_color: data.secondary_color,
@@ -231,8 +231,11 @@ export default function BatchNew() {
         if (codesError) throw codesError;
       }
 
-      // 3. Generate PDF
-      const pdfOptions = buildPdfOptions(settings, startRow, startCol, logoDataUrl);
+      // 3. Generate PDF — use destination override if set
+      const effectiveSettings = destinationOverride
+        ? { ...settings, default_destination_url: destinationOverride }
+        : settings;
+      const pdfOptions = buildPdfOptions(effectiveSettings, startRow, startCol, logoDataUrl);
       const blob = await generatePdf(validRecords, pdfOptions);
       setPdfBlob(blob);
 
@@ -261,13 +264,14 @@ export default function BatchNew() {
 
   const handleDownloadCsv = () => {
     const validRecords = mappedRecords.filter((r) => r.homesPassedId);
+    const destUrl = destinationOverride || settings.default_destination_url || "https://www.sparklight.com";
     const rows = [
       ["HomesPassedID", "Address", "QR_URL"],
-      ...validRecords.map((r) => [
-        r.homesPassedId,
-        r.address,
-        `${settings.base_url}/HH/${r.homesPassedId}`,
-      ]),
+      ...validRecords.map((r) => {
+        const u = new URL(destUrl);
+        u.searchParams.set("hpid", r.homesPassedId);
+        return [r.homesPassedId, r.address, u.toString()];
+      }),
     ];
     const csv = rows.map((r) => r.map((c) => `"${c.replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });

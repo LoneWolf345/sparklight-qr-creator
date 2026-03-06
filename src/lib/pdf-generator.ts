@@ -6,7 +6,7 @@ import type { MappedRecord } from "./batch-types";
 import { AVERY_94107 } from "./batch-types";
 
 interface PdfOptions {
-  baseUrl: string;
+  destinationUrl: string;
   qrSizeInches: number;
   primaryColor: string;
   secondaryColor: string;
@@ -180,7 +180,7 @@ export async function generatePdf(
   options: PdfOptions
 ): Promise<Blob> {
   const {
-    baseUrl,
+    destinationUrl,
     qrSizeInches,
     xOffsetMm,
     yOffsetMm,
@@ -219,9 +219,10 @@ export async function generatePdf(
     const labelX = layout.marginLeft + col * (layout.labelWidth + layout.colGap) + xOffsetIn;
     const labelY = layout.marginTop + row * (layout.labelHeight + layout.rowGap) + yOffsetIn;
 
-    // Generate QR code with per-record address as bottom border text
-    const qrUrl = `${baseUrl}/HH/${record.homesPassedId}`;
-    const qrDataUrl = await renderQrToDataUrl(qrUrl, options, record.address);
+    // Generate QR code with destination URL + hpid param
+    const destUrl = new URL(destinationUrl);
+    destUrl.searchParams.set("hpid", record.homesPassedId);
+    const qrDataUrl = await renderQrToDataUrl(destUrl.toString(), options, record.address);
 
     // Center QR within label
     const qrX = labelX + (layout.labelWidth - qrSizeInches) / 2;
@@ -271,9 +272,10 @@ export async function generatePreviewCanvas(
     const labelXIn = layout.marginLeft + col * (layout.labelWidth + layout.colGap) + xOffsetIn;
     const labelYIn = layout.marginTop + row * (layout.labelHeight + layout.rowGap) + yOffsetIn;
 
-    // Generate QR with per-record address as bottom border text
-    const qrUrl = `${options.baseUrl}/HH/${record.homesPassedId}`;
-    const qrDataUrl = await renderQrToDataUrl(qrUrl, options, record.address);
+    // Generate QR with destination URL + hpid param
+    const destUrl = new URL(options.destinationUrl);
+    destUrl.searchParams.set("hpid", record.homesPassedId);
+    const qrDataUrl = await renderQrToDataUrl(destUrl.toString(), options, record.address);
 
     // Center QR within label
     const qrXIn = labelXIn + (layout.labelWidth - options.qrSizeInches) / 2;

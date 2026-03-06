@@ -21,9 +21,10 @@ interface ReprintDialogProps {
   onOpenChange: (open: boolean) => void;
   codes: QrCode[];
   batchName: string;
+  destinationUrlOverride?: string | null;
 }
 
-export function ReprintDialog({ open, onOpenChange, codes, batchName }: ReprintDialogProps) {
+export function ReprintDialog({ open, onOpenChange, codes, batchName, destinationUrlOverride }: ReprintDialogProps) {
   const [startRow, setStartRow] = useState(0);
   const [startCol, setStartCol] = useState(0);
   const [generating, setGenerating] = useState(false);
@@ -40,6 +41,10 @@ export function ReprintDialog({ open, onOpenChange, codes, batchName }: ReprintD
       if (error || !settings) throw new Error("Failed to load settings");
 
       const s = settings as unknown as QrSettings;
+      // Use batch override if available
+      if (destinationUrlOverride) {
+        (s as any).default_destination_url = destinationUrlOverride;
+      }
 
       // Load logo if configured
       let logoDataUrl: string | undefined;

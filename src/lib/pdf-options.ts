@@ -1,6 +1,6 @@
 /** Shared type for the settings object from app_settings */
 export interface QrSettings {
-  base_url: string;
+  default_destination_url: string;
   qr_size_inches: number;
   primary_color: string;
   secondary_color: string;
@@ -42,7 +42,7 @@ export function buildPdfOptions(
   logoDataUrl?: string,
 ) {
   return {
-    baseUrl: s.base_url,
+    destinationUrl: s.default_destination_url,
     qrSizeInches: s.qr_size_inches,
     primaryColor: s.primary_color,
     secondaryColor: s.secondary_color,
