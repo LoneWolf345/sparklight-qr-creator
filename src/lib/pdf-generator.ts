@@ -219,9 +219,10 @@ export async function generatePdf(
     const labelX = layout.marginLeft + col * (layout.labelWidth + layout.colGap) + xOffsetIn;
     const labelY = layout.marginTop + row * (layout.labelHeight + layout.rowGap) + yOffsetIn;
 
-    // Generate QR code with per-record address as bottom border text
-    const qrUrl = `${baseUrl}/HH/${record.homesPassedId}`;
-    const qrDataUrl = await renderQrToDataUrl(qrUrl, options, record.address);
+    // Generate QR code with destination URL + hpid param
+    const destUrl = new URL(destinationUrl);
+    destUrl.searchParams.set("hpid", record.homesPassedId);
+    const qrDataUrl = await renderQrToDataUrl(destUrl.toString(), options, record.address);
 
     // Center QR within label
     const qrX = labelX + (layout.labelWidth - qrSizeInches) / 2;
