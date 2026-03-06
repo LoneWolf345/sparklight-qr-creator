@@ -297,8 +297,6 @@ export default function BatchDetail() {
                   </TableHead>
                   <TableHead>HomesPassedID</TableHead>
                   <TableHead>Address</TableHead>
-                  <TableHead>QR URL</TableHead>
-                  <TableHead>Status</TableHead>
                   {role && <TableHead className="text-right">Actions</TableHead>}
                 </TableRow>
               </TableHeader>
