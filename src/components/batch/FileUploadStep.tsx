@@ -1,12 +1,13 @@
-import { useCallback, useState, useRef, useEffect } from "react";
+import { useCallback, useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Upload, FileSpreadsheet, AlertCircle, ChevronsUpDown, Check } from "lucide-react";
+import { Upload, FileSpreadsheet, AlertCircle, ChevronsUpDown, Check, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { isCityInState, getCitiesForState } from "@/data/us-cities";
 
 const US_STATES = [
   "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA",
