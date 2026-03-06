@@ -40,7 +40,9 @@ export function FileUploadStep({
 }: FileUploadStepProps) {
   const [dragOver, setDragOver] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [stateOpen, setStateOpen] = useState(false);
   const [cityOpen, setCityOpen] = useState(false);
+  const cityTriggerRef = useRef<HTMLButtonElement>(null);
 
   const cityWarning = useMemo(() => {
     if (!city || !state) return null;
