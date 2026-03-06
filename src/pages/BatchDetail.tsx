@@ -25,7 +25,7 @@ interface QrCode {
 interface Batch {
   id: string;
   name: string;
-  status: string;
+  row_count: number;
   row_count: number;
   template: string;
   created_at: string;
