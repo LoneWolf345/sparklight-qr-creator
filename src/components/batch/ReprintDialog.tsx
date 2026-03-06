@@ -21,6 +21,7 @@ interface ReprintDialogProps {
   onOpenChange: (open: boolean) => void;
   codes: QrCode[];
   batchName: string;
+  destinationUrlOverride?: string | null;
 }
 
 export function ReprintDialog({ open, onOpenChange, codes, batchName }: ReprintDialogProps) {
