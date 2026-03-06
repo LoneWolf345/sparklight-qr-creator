@@ -129,7 +129,7 @@ export default function BatchDetail() {
     URL.revokeObjectURL(url);
   };
 
-  const handleDeleteCode = async (codeId: string) => {
+  const handleDeleteCode = async (codeId: string, label?: string) => {
     const { error } = await supabase
       .from("qr_codes")
       .delete()
@@ -139,6 +139,9 @@ export default function BatchDetail() {
     } else {
       setCodes(codes.filter((c) => c.id !== codeId));
       toast.success("Address deleted");
+      if (user) {
+        logAudit({ action: "delete", entityType: "address", entityId: codeId, entityName: label, details: { community_id: id, community_name: batch?.name }, userId: user.id });
+      }
     }
   };
 
