@@ -301,8 +301,8 @@ export default function BatchDetail() {
       </div>
 
       {/* Codes Table */}
-      <Card>
-        <CardHeader>
+      <Card className="flex flex-col min-h-0 flex-1">
+        <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">QR Codes</CardTitle>
             <div className="relative w-64">
@@ -316,37 +316,37 @@ export default function BatchDetail() {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="max-h-[500px] overflow-y-auto">
-            <Table>
+        <CardContent className="flex-1 overflow-hidden p-0">
+          <div className="overflow-y-auto h-full max-h-[calc(100vh-380px)]">
+            <Table className="table-auto">
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-10">
+                  <TableHead className="w-10 px-2">
                     <Checkbox
                       checked={allFilteredSelected}
                       onCheckedChange={toggleSelectAll}
                       aria-label="Select all"
                     />
                   </TableHead>
-                  <TableHead>HomesPassedID</TableHead>
-                  <TableHead>Address</TableHead>
-                  {role && <TableHead className="text-right">Actions</TableHead>}
+                  <TableHead className="w-[140px] px-2">HomesPassedID</TableHead>
+                  <TableHead className="px-2">Address</TableHead>
+                  {role && <TableHead className="w-[60px] px-2 text-right">Actions</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredCodes.map((code) => (
                   <TableRow key={code.id}>
-                    <TableCell>
+                    <TableCell className="px-2 py-1.5">
                       <Checkbox
                         checked={selectedIds.has(code.id)}
                         onCheckedChange={() => toggleSelect(code.id)}
                         aria-label={`Select ${code.address}`}
                       />
                     </TableCell>
-                    <TableCell className="font-mono text-sm">{code.homes_passed_id}</TableCell>
-                    <TableCell className="text-sm">{code.address}</TableCell>
+                    <TableCell className="font-mono text-sm px-2 py-1.5">{code.homes_passed_id}</TableCell>
+                    <TableCell className="text-sm px-2 py-1.5">{code.address}</TableCell>
                     {role && (
-                      <TableCell className="text-right">
+                      <TableCell className="text-right px-2 py-1.5">
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
