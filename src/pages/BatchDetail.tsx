@@ -97,7 +97,7 @@ export default function BatchDetail() {
   };
 
   const handleReprintAll = () => {
-    setReprintCodes(activeCodes);
+    setReprintCodes(codes);
     setReprintOpen(true);
   };
 
