@@ -6,7 +6,7 @@ import type { MappedRecord } from "./batch-types";
 import { AVERY_94107 } from "./batch-types";
 
 interface PdfOptions {
-  baseUrl: string;
+  destinationUrl: string;
   qrSizeInches: number;
   primaryColor: string;
   secondaryColor: string;
