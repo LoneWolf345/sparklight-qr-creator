@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { logAudit } from "@/lib/audit";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,6 +37,9 @@ export default function Batches() {
     } else {
       setBatches((prev) => prev.filter((b) => b.id !== id));
       toast.success(`"${name}" deleted`);
+      if (user) {
+        logAudit({ action: "delete", entityType: "community", entityId: id, entityName: name, userId: user.id });
+      }
     }
   };
 

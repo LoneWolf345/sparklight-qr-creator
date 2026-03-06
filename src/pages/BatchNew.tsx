@@ -12,6 +12,7 @@ import { parseFile, autoDetectMapping } from "@/lib/file-parser";
 import { mapAndValidate } from "@/lib/validation";
 import { generatePdf } from "@/lib/pdf-generator";
 import { toast } from "sonner";
+import { logAudit } from "@/lib/audit";
 import { ArrowLeft, ArrowRight, Loader2, Download } from "lucide-react";
 import sparklightLogo from "@/assets/sparklight-logo.png";
 import type { ParsedRow, ColumnMapping, MappedRecord, ValidationWarning } from "@/lib/batch-types";
@@ -246,6 +247,7 @@ export default function BatchNew() {
         .eq("id", batch.id);
 
       toast.success(`Community generated: ${validRecords.length} QR codes`);
+      logAudit({ action: "create", entityType: "community", entityId: batch.id, entityName: batchName.trim(), details: { row_count: validRecords.length, city: city.trim(), state: state.trim(), market: market.trim() }, userId: user!.id });
     } catch (err: any) {
       toast.error("Generation failed: " + err.message);
     }

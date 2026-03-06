@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { logAudit } from "@/lib/audit";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,7 +40,7 @@ interface Batch {
 export default function BatchDetail() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { role } = useAuth();
+  const { user, role } = useAuth();
   const [batch, setBatch] = useState<Batch | null>(null);
   const [codes, setCodes] = useState<QrCode[]>([]);
   const [loading, setLoading] = useState(true);
@@ -128,7 +129,7 @@ export default function BatchDetail() {
     URL.revokeObjectURL(url);
   };
 
-  const handleDeleteCode = async (codeId: string) => {
+  const handleDeleteCode = async (codeId: string, label?: string) => {
     const { error } = await supabase
       .from("qr_codes")
       .delete()
@@ -138,6 +139,9 @@ export default function BatchDetail() {
     } else {
       setCodes(codes.filter((c) => c.id !== codeId));
       toast.success("Address deleted");
+      if (user) {
+        logAudit({ action: "delete", entityType: "address", entityId: codeId, entityName: label, details: { community_id: id, community_name: batch?.name }, userId: user.id });
+      }
     }
   };
 
@@ -152,7 +156,7 @@ export default function BatchDetail() {
     setAdding(true);
     const { data, error } = await supabase
       .from("qr_codes")
-      .insert({ batch_id: batch.id, homes_passed_id: newHpid.trim(), address: newAddress.trim() })
+      .insert({ batch_id: batch.id, homes_passed_id: newHpid.trim(), address: newAddress.trim(), created_by: user?.id ?? null } as any)
       .select()
       .single();
     if (error) {
@@ -165,6 +169,9 @@ export default function BatchDetail() {
       setNewHpid("");
       setNewAddress("");
       toast.success("Address added");
+      if (user) {
+        logAudit({ action: "create", entityType: "address", entityId: (data as any).id, entityName: newAddress.trim(), details: { community_id: batch.id, community_name: batch.name, homes_passed_id: newHpid.trim() }, userId: user.id });
+      }
       setAddDialogOpen(false);
     }
     setAdding(false);
@@ -287,6 +294,9 @@ export default function BatchDetail() {
                     if (error) {
                       toast.error("Failed to delete: " + error.message);
                     } else {
+                      if (user) {
+                        logAudit({ action: "delete", entityType: "community", entityId: batch.id, entityName: batch.name, userId: user.id });
+                      }
                       toast.success(`"${batch.name}" deleted`);
                       navigate("/batches");
                     }
@@ -364,7 +374,7 @@ export default function BatchDetail() {
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
                               <AlertDialogAction
                                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                onClick={() => handleDeleteCode(code.id)}
+                                onClick={() => handleDeleteCode(code.id, code.address || code.homes_passed_id)}
                               >
                                 Delete
                               </AlertDialogAction>
