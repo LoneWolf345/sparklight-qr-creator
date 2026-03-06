@@ -4,7 +4,8 @@ import { GlobalSettingsTab } from "@/components/admin/GlobalSettingsTab";
 import { QrStyleTab } from "@/components/admin/QrStyleTab";
 import { UserManagementTab } from "@/components/admin/UserManagementTab";
 import { AuditLogTab } from "@/components/admin/AuditLogTab";
-import { Settings, Users, FileText, QrCode } from "lucide-react";
+import { CitiesTab } from "@/components/admin/CitiesTab";
+import { Settings, Users, FileText, QrCode, MapPin } from "lucide-react";
 
 export default function Admin() {
   return (
@@ -24,6 +25,9 @@ export default function Admin() {
           <TabsTrigger value="audit" className="gap-2">
             <FileText className="h-4 w-4" /> Audit Log
           </TabsTrigger>
+          <TabsTrigger value="cities" className="gap-2">
+            <MapPin className="h-4 w-4" /> Cities
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="settings">
           <GlobalSettingsTab />
@@ -36,6 +40,9 @@ export default function Admin() {
         </TabsContent>
         <TabsContent value="audit">
           <AuditLogTab />
+        </TabsContent>
+        <TabsContent value="cities">
+          <CitiesTab />
         </TabsContent>
       </Tabs>
     </AppLayout>

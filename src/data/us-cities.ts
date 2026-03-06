@@ -34,12 +34,29 @@ for (const [stateName, cities] of Object.entries(usaData)) {
 export { US_CITIES_BY_STATE };
 
 /**
+ * Add a city to a state's list (in-memory only, resets on reload).
+ * Returns true if added, false if it already exists.
+ */
+export function addCityToState(city: string, stateCode: string): boolean {
+  if (!US_CITIES_BY_STATE[stateCode]) {
+    US_CITIES_BY_STATE[stateCode] = [];
+  }
+  const exists = US_CITIES_BY_STATE[stateCode].some(
+    (c) => c.toLowerCase() === city.trim().toLowerCase()
+  );
+  if (exists) return false;
+  US_CITIES_BY_STATE[stateCode].push(city.trim());
+  US_CITIES_BY_STATE[stateCode].sort((a, b) => a.localeCompare(b));
+  return true;
+}
+
+/**
  * Check if a city exists in a given state (case-insensitive).
  * Returns true if the state is not in the dataset (unknown territory).
  */
 export function isCityInState(city: string, stateCode: string): boolean {
   const cities = US_CITIES_BY_STATE[stateCode];
-  if (!cities) return true; // Unknown state/territory — don't warn
+  if (!cities) return true;
   return cities.some((c) => c.toLowerCase() === city.trim().toLowerCase());
 }
 
