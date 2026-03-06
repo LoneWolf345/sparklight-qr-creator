@@ -271,7 +271,6 @@ export default function BatchNew() {
         u.searchParams.set("hpid", r.homesPassedId);
         return [r.homesPassedId, r.address, u.toString()];
       }),
-      ]),
     ];
     const csv = rows.map((r) => r.map((c) => `"${c.replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });

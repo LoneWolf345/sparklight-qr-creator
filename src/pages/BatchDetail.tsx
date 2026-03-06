@@ -118,7 +118,6 @@ export default function BatchDetail() {
         u.searchParams.set("hpid", c.homes_passed_id);
         return [c.homes_passed_id, c.address, u.toString(), c.status];
       }),
-      ]),
     ];
     const csv = rows.map((r) => r.map((c) => `"${c.replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
