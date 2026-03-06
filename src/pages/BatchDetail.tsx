@@ -312,16 +312,6 @@ export default function BatchDetail() {
                     </TableCell>
                     <TableCell className="font-mono text-sm">{code.homes_passed_id}</TableCell>
                     <TableCell className="text-sm">{code.address}</TableCell>
-                    <TableCell className="text-xs text-muted-foreground font-mono">
-                      {(() => { const u = new URL(batch.destination_url_override || settings.default_destination_url || "https://www.sparklight.com"); u.searchParams.set("hpid", code.homes_passed_id); return u.toString(); })()}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={code.status === "active" ? "default" : "destructive"}
-                      >
-                        {code.status}
-                      </Badge>
-                    </TableCell>
                     {role && (
                       <TableCell className="text-right">
                         <AlertDialog>
