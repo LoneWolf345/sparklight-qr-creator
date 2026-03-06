@@ -77,12 +77,38 @@ export function FileUploadStep({
         </div>
         <div className="space-y-2">
           <Label htmlFor="state">State <span className="text-destructive">*</span></Label>
-          <Input
-            id="state"
-            value={state}
-            onChange={(e) => onStateChange(e.target.value)}
-            placeholder="e.g., AZ"
-          />
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                className={cn("w-full justify-between font-normal", !state && "text-muted-foreground")}
+              >
+                {state || "Select state…"}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[200px] p-0">
+              <Command>
+                <CommandInput placeholder="Search states…" />
+                <CommandList>
+                  <CommandEmpty>No state found.</CommandEmpty>
+                  <CommandGroup>
+                    {US_STATES.map((s) => (
+                      <CommandItem
+                        key={s}
+                        value={s}
+                        onSelect={(val) => onStateChange(val.toUpperCase())}
+                      >
+                        <Check className={cn("mr-2 h-4 w-4", state === s ? "opacity-100" : "opacity-0")} />
+                        {s}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </div>
         <div className="space-y-2">
           <Label htmlFor="market">Market <span className="text-destructive">*</span></Label>
