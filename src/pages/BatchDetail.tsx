@@ -165,6 +165,7 @@ export default function BatchDetail() {
       setNewHpid("");
       setNewAddress("");
       toast.success("Address added");
+      setAddDialogOpen(false);
     }
     setAdding(false);
   };
