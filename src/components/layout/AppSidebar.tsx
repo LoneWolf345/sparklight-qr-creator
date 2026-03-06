@@ -1,4 +1,4 @@
-import { Layers, Plus, Settings, LogOut, QrCode } from "lucide-react";
+import { Layers, Plus, Settings, LogOut, LogIn, QrCode } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
