@@ -316,7 +316,7 @@ export default function BatchDetail() {
                   <TableHead>Address</TableHead>
                   <TableHead>QR URL</TableHead>
                   <TableHead>Status</TableHead>
-                  {role === "admin" && <TableHead className="text-right">Actions</TableHead>}
+                  {role && <TableHead className="text-right">Actions</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
