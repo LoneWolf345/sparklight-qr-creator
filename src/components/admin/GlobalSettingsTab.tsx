@@ -9,7 +9,6 @@ import { Save, Globe, Palette, Printer } from "lucide-react";
 
 interface AppSettings {
   id: string;
-  base_url: string;
   default_destination_url: string;
   primary_color: string;
   secondary_color: string;
