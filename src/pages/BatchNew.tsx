@@ -51,7 +51,6 @@ export default function BatchNew() {
 
   // Settings
   const [settings, setSettings] = useState<any>({
-    base_url: "https://go.sparklight.internal",
     default_destination_url: "https://www.sparklight.com",
     qr_size_inches: 1.35,
     primary_color: "#7B2D8E",
