@@ -5,18 +5,20 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 
-interface BatchLog {
+interface AuditEntry {
   id: string;
-  name: string;
-  status: string;
-  row_count: number;
+  action: string;
+  entity_type: string;
+  entity_id: string;
+  entity_name: string | null;
+  details: Record<string, unknown> | null;
+  user_id: string;
   created_at: string;
-  created_by: string;
-  creator_email?: string;
+  user_email?: string;
 }
 
 export function AuditLogTab() {
-  const [logs, setLogs] = useState<BatchLog[]>([]);
+  const [logs, setLogs] = useState<AuditEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,33 +26,37 @@ export function AuditLogTab() {
   }, []);
 
   const loadLogs = async () => {
-    // Get batches
-    const { data: batches } = await supabase
-      .from("qr_batches")
+    const { data: entries } = await supabase
+      .from("audit_log" as any)
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(200);
 
-    if (!batches || batches.length === 0) {
+    if (!entries || entries.length === 0) {
       setLogs([]);
       setLoading(false);
       return;
     }
 
-    // Get profiles to map user IDs to emails
     const { data: profiles } = await supabase
       .from("profiles")
       .select("user_id, username, display_name");
 
-    const enriched = batches.map((b) => {
-      const profile = profiles?.find((p) => p.user_id === b.created_by);
-      return {
-        ...b,
-        creator_email: profile?.username ?? "Unknown",
-      };
+    const enriched = (entries as any[]).map((e) => {
+      const profile = profiles?.find((p) => p.user_id === e.user_id);
+      return { ...e, user_email: profile?.display_name || profile?.username || "Unknown" };
     });
 
     setLogs(enriched);
     setLoading(false);
+  };
+
+  const actionColor = (action: string) => {
+    switch (action) {
+      case "create": return "default";
+      case "delete": return "destructive";
+      default: return "secondary";
+    }
   };
 
   return (
@@ -59,29 +65,29 @@ export function AuditLogTab() {
         {loading ? (
           <p className="text-sm text-muted-foreground">Loading audit log…</p>
         ) : logs.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-8">No batch activity yet.</p>
+          <p className="text-sm text-muted-foreground text-center py-8">No audit activity yet.</p>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Batch Name</TableHead>
-                <TableHead>Created By</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Row Count</TableHead>
+                <TableHead>Action</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>User</TableHead>
                 <TableHead>Timestamp</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {logs.map((log) => (
                 <TableRow key={log.id}>
-                  <TableCell className="font-medium">{log.name}</TableCell>
-                  <TableCell className="text-sm">{log.creator_email}</TableCell>
                   <TableCell>
-                    <Badge variant={log.status === "completed" ? "default" : "secondary"}>
-                      {log.status}
+                    <Badge variant={actionColor(log.action) as any}>
+                      {log.action}
                     </Badge>
                   </TableCell>
-                  <TableCell>{log.row_count}</TableCell>
+                  <TableCell className="text-sm capitalize">{log.entity_type}</TableCell>
+                  <TableCell className="font-medium text-sm">{log.entity_name || log.entity_id}</TableCell>
+                  <TableCell className="text-sm">{log.user_email}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {format(new Date(log.created_at), "MMM d, yyyy h:mm a")}
                   </TableCell>
