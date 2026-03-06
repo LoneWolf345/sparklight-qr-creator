@@ -318,7 +318,7 @@ export default function BatchDetail() {
         </CardHeader>
         <CardContent className="flex-1 overflow-hidden p-0">
           <div className="overflow-y-auto h-full max-h-[calc(100vh-380px)]">
-            <Table className="table-auto">
+            <Table className="w-auto">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-10 px-2">
