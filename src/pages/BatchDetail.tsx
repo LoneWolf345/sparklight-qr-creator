@@ -145,6 +145,7 @@ export default function BatchDetail() {
   const [newHpid, setNewHpid] = useState("");
   const [newAddress, setNewAddress] = useState("");
   const [adding, setAdding] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
 
   const handleAddAddress = async () => {
     if (!newHpid.trim() || !newAddress.trim() || !batch) return;
