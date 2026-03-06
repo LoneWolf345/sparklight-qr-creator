@@ -59,11 +59,11 @@ export default function BatchDetail() {
     Promise.all([
       supabase.from("qr_batches").select("*").eq("id", id).single(),
       supabase.from("qr_codes").select("*").eq("batch_id", id).order("created_at"),
-      supabase.from("app_settings").select("base_url").limit(1).single(),
+      supabase.from("app_settings").select("default_destination_url").limit(1).single(),
     ]).then(([batchRes, codesRes, settingsRes]) => {
       setBatch(batchRes.data as Batch);
       setCodes((codesRes.data as QrCode[]) ?? []);
-      if (settingsRes.data) setSettings({ base_url: settingsRes.data.base_url });
+      if (settingsRes.data) setSettings({ default_destination_url: settingsRes.data.default_destination_url });
       setLoading(false);
     });
   }, [id]);
