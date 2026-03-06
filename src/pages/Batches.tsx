@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Plus, Trash2, LogIn } from "lucide-react";
+import { Plus, Trash2, LogIn, Building2, MapPin, Map, Flag } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -51,6 +51,29 @@ export default function Batches() {
           </Button>
         )}
       </div>
+
+      {!loading && batches.length > 0 && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          {[
+            { label: "Total Communities", value: batches.length, icon: Building2 },
+            { label: "Total Addresses", value: batches.reduce((sum, b) => sum + (b.row_count || 0), 0), icon: MapPin },
+            { label: "Markets Covered", value: new Set(batches.map(b => b.market).filter(Boolean)).size, icon: Map },
+            { label: "States Covered", value: new Set(batches.map(b => b.state).filter(Boolean)).size, icon: Flag },
+          ].map((kpi) => (
+            <Card key={kpi.label}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="rounded-md bg-primary/10 p-2">
+                  <kpi.icon className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">{kpi.label}</p>
+                  <p className="text-2xl font-bold text-foreground">{kpi.value}</p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {!user && (
         <Alert className="mb-6">
