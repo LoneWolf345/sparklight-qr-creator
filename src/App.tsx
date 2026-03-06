@@ -25,10 +25,10 @@ const App = () => (
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<Navigate to="/batches" replace />} />
-            <Route path="/batches" element={<ProtectedRoute><Batches /></ProtectedRoute>} />
+            <Route path="/batches" element={<Batches />} />
             <Route path="/batches/new" element={<ProtectedRoute><BatchNew /></ProtectedRoute>} />
-            <Route path="/batches/:id" element={<ProtectedRoute><BatchDetail /></ProtectedRoute>} />
-            <Route path="/single-qr" element={<ProtectedRoute><SingleQr /></ProtectedRoute>} />
+            <Route path="/batches/:id" element={<BatchDetail />} />
+            <Route path="/single-qr" element={<SingleQr />} />
             <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -123,18 +123,34 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-3">
-        {!collapsed && user && (
-          <p className="mb-2 truncate text-xs text-sidebar-foreground/60">{user.email}</p>
+        {user ? (
+          <>
+            {!collapsed && (
+              <p className="mb-2 truncate text-xs text-sidebar-foreground/60">{user.email}</p>
+            )}
+            <Button
+              variant="ghost"
+              size={collapsed ? "icon" : "sm"}
+              onClick={signOut}
+              className="w-full text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+            >
+              <LogOut className="h-4 w-4" />
+              {!collapsed && <span className="ml-2">Sign Out</span>}
+            </Button>
+          </>
+        ) : (
+          <Button
+            variant="ghost"
+            size={collapsed ? "icon" : "sm"}
+            asChild
+            className="w-full text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+          >
+            <NavLink to="/login" end>
+              <LogIn className="h-4 w-4" />
+              {!collapsed && <span className="ml-2">Sign In</span>}
+            </NavLink>
+          </Button>
         )}
-        <Button
-          variant="ghost"
-          size={collapsed ? "icon" : "sm"}
-          onClick={signOut}
-          className="w-full text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
-        >
-          <LogOut className="h-4 w-4" />
-          {!collapsed && <span className="ml-2">Sign Out</span>}
-        </Button>
       </SidebarFooter>
     </Sidebar>
   );
