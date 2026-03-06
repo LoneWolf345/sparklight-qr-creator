@@ -344,7 +344,7 @@ export default function BatchDetail() {
                 ))}
                 {filteredCodes.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={role ? 6 : 5} className="text-center text-muted-foreground py-8">
+                    <TableCell colSpan={role ? 4 : 3} className="text-center text-muted-foreground py-8">
                       {search ? "No matching codes found." : "No codes in this batch."}
                     </TableCell>
                   </TableRow>
