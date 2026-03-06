@@ -14,7 +14,7 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 
 export default function Batches() {
-  const { role } = useAuth();
+  const { user, role } = useAuth();
   const [batches, setBatches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
