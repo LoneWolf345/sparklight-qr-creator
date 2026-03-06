@@ -268,9 +268,9 @@ export default function SingleQr() {
               className="border rounded-lg bg-background p-4 [&_svg_.qr-border-plugin-trial]:hidden"
             />
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" size="sm" onClick={handleCopyToClipboard} disabled={!url}>
-                <ClipboardCopy className="mr-2 h-4 w-4" />
-                Copy
+              <Button variant={copied ? "default" : "outline"} size="sm" onClick={handleCopyToClipboard} disabled={!url}>
+                {copied ? <Check className="mr-2 h-4 w-4 animate-scale-in" /> : <ClipboardCopy className="mr-2 h-4 w-4" />}
+                {copied ? "Copied!" : "Copy"}
               </Button>
               <Button variant="outline" size="sm" onClick={() => handleDownload("png")} disabled={!url}>
                 <FileImage className="mr-2 h-4 w-4" />
