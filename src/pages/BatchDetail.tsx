@@ -67,7 +67,7 @@ export default function BatchDetail() {
     });
   }, [id]);
 
-  const activeCodes = codes.filter((c) => c.status === "active");
+  
 
   const filteredCodes = codes.filter(
     (c) =>
