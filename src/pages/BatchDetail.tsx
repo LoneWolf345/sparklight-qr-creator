@@ -110,13 +110,14 @@ export default function BatchDetail() {
 
   const handleDownloadCsv = () => {
     if (!batch) return;
+    const destUrl = batch.destination_url_override || settings.default_destination_url || "https://www.sparklight.com";
     const rows = [
       ["HomesPassedID", "Address", "QR_URL", "Status"],
-      ...codes.map((c) => [
-        c.homes_passed_id,
-        c.address,
-        `${settings.base_url}/HH/${c.homes_passed_id}`,
-        c.status,
+      ...codes.map((c) => {
+        const u = new URL(destUrl);
+        u.searchParams.set("hpid", c.homes_passed_id);
+        return [c.homes_passed_id, c.address, u.toString(), c.status];
+      }),
       ]),
     ];
     const csv = rows.map((r) => r.map((c) => `"${c.replace(/"/g, '""')}"`).join(",")).join("\n");
