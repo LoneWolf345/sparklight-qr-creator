@@ -42,11 +42,13 @@ export default function Batches() {
     <AppLayout>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-foreground">Communities</h1>
-        <Button asChild>
-          <Link to="/batches/new">
-            <Plus className="mr-2 h-4 w-4" /> New Community
-          </Link>
-        </Button>
+        {role && (
+          <Button asChild>
+            <Link to="/batches/new">
+              <Plus className="mr-2 h-4 w-4" /> New Community
+            </Link>
+          </Button>
+        )}
       </div>
 
       <Card>
@@ -58,10 +60,12 @@ export default function Batches() {
             <p className="text-muted-foreground text-sm">Loading…</p>
           ) : batches.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-muted-foreground mb-4">No communities yet. Create your first community to get started.</p>
-              <Button asChild variant="outline">
-                <Link to="/batches/new">Create Community</Link>
-              </Button>
+              <p className="text-muted-foreground mb-4">No communities yet.{role ? " Create your first community to get started." : ""}</p>
+              {role && (
+                <Button asChild variant="outline">
+                  <Link to="/batches/new">Create Community</Link>
+                </Button>
+              )}
             </div>
           ) : (
             <Table>
