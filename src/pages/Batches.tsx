@@ -52,6 +52,19 @@ export default function Batches() {
         )}
       </div>
 
+      {!user && (
+        <Alert className="mb-6">
+          <LogIn className="h-4 w-4" />
+          <AlertDescription>
+            To create new communities or manage QR batches,{" "}
+            <Link to="/login" className="font-medium text-primary underline underline-offset-4 hover:text-primary/80">
+              sign in
+            </Link>{" "}
+            with your team account.
+          </AlertDescription>
+        </Alert>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">All Communities</CardTitle>
