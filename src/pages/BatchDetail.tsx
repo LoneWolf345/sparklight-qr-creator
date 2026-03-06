@@ -129,14 +129,44 @@ export default function BatchDetail() {
     URL.revokeObjectURL(url);
   };
 
-  const handleRevokeCode = async (codeId: string) => {
+  const handleDeleteCode = async (codeId: string) => {
     const { error } = await supabase
       .from("qr_codes")
-      .update({ status: "revoked" })
+      .delete()
       .eq("id", codeId);
-    if (!error) {
-      setCodes(codes.map((c) => (c.id === codeId ? { ...c, status: "revoked" } : c)));
+    if (error) {
+      toast.error("Failed to delete: " + error.message);
+    } else {
+      setCodes(codes.filter((c) => c.id !== codeId));
+      toast.success("Address deleted");
     }
+  };
+
+  // Add new address
+  const [newHpid, setNewHpid] = useState("");
+  const [newAddress, setNewAddress] = useState("");
+  const [adding, setAdding] = useState(false);
+
+  const handleAddAddress = async () => {
+    if (!newHpid.trim() || !newAddress.trim() || !batch) return;
+    setAdding(true);
+    const { data, error } = await supabase
+      .from("qr_codes")
+      .insert({ batch_id: batch.id, homes_passed_id: newHpid.trim(), address: newAddress.trim() })
+      .select()
+      .single();
+    if (error) {
+      toast.error("Failed to add: " + error.message);
+    } else if (data) {
+      setCodes([...codes, data as QrCode]);
+      // Update batch row_count
+      await supabase.from("qr_batches").update({ row_count: codes.length + 1 }).eq("id", batch.id);
+      setBatch({ ...batch, row_count: batch.row_count + 1 });
+      setNewHpid("");
+      setNewAddress("");
+      toast.success("Address added");
+    }
+    setAdding(false);
   };
 
   if (loading) {
