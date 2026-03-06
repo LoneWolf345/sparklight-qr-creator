@@ -58,24 +58,85 @@ export default function Batches() {
 
       {!loading && batches.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          {[
-            { label: "Total Communities", value: batches.length, icon: Building2 },
-            { label: "Total Addresses", value: batches.reduce((sum, b) => sum + (b.row_count || 0), 0), icon: MapPin },
-            { label: "Markets Covered", value: new Set(batches.map(b => b.market).filter(Boolean)).size, icon: Map },
-            { label: "States Covered", value: new Set(batches.map(b => b.state).filter(Boolean)).size, icon: Flag },
-          ].map((kpi) => (
-            <Card key={kpi.label}>
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="rounded-md bg-primary/10 p-2">
-                  <kpi.icon className="h-5 w-5 text-primary" />
+          {/* Total Communities */}
+          <Card>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="rounded-md bg-primary/10 p-2">
+                <Building2 className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Total Communities</p>
+                <p className="text-2xl font-bold text-foreground">{batches.length}</p>
+              </div>
+            </CardContent>
+          </Card>
+          {/* Total Addresses */}
+          <Card>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="rounded-md bg-primary/10 p-2">
+                <MapPin className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Total Addresses</p>
+                <p className="text-2xl font-bold text-foreground">{batches.reduce((sum, b) => sum + (b.row_count || 0), 0).toLocaleString()}</p>
+              </div>
+            </CardContent>
+          </Card>
+          {/* Markets Breakdown */}
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="rounded-md bg-primary/10 p-1.5">
+                  <Map className="h-4 w-4 text-primary" />
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{kpi.label}</p>
-                  <p className="text-2xl font-bold text-foreground">{kpi.value}</p>
+                <p className="text-sm text-muted-foreground">Markets</p>
+              </div>
+              <div className="space-y-1">
+                {Object.entries(
+                  batches.reduce<Record<string, number>>((acc, b) => {
+                    const m = b.market || "Unknown";
+                    acc[m] = (acc[m] || 0) + (b.row_count || 0);
+                    return acc;
+                  }, {})
+                )
+                  .sort(([, a], [, b]) => b - a)
+                  .map(([market, count]) => (
+                    <div key={market} className="flex justify-between text-sm">
+                      <span className="text-foreground truncate">{market}</span>
+                      <span className="text-muted-foreground font-medium">{count.toLocaleString()}</span>
+                    </div>
+                  ))}
+              </div>
+            </CardContent>
+          </Card>
+          {/* Top States */}
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="rounded-md bg-primary/10 p-1.5">
+                  <Flag className="h-4 w-4 text-primary" />
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+                <p className="text-sm text-muted-foreground">Top States</p>
+              </div>
+              <div className="space-y-1">
+                {Object.entries(
+                  batches.reduce<Record<string, number>>((acc, b) => {
+                    const s = b.state || "Unknown";
+                    acc[s] = (acc[s] || 0) + (b.row_count || 0);
+                    return acc;
+                  }, {})
+                )
+                  .sort(([, a], [, b]) => b - a)
+                  .slice(0, 3)
+                  .map(([state, count]) => (
+                    <div key={state} className="flex justify-between text-sm">
+                      <span className="text-foreground truncate">{state}</span>
+                      <span className="text-muted-foreground font-medium">{count.toLocaleString()}</span>
+                    </div>
+                  ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       )}
 
