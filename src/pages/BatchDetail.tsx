@@ -156,7 +156,7 @@ export default function BatchDetail() {
     setAdding(true);
     const { data, error } = await supabase
       .from("qr_codes")
-      .insert({ batch_id: batch.id, homes_passed_id: newHpid.trim(), address: newAddress.trim() })
+      .insert({ batch_id: batch.id, homes_passed_id: newHpid.trim(), address: newAddress.trim(), created_by: user?.id ?? null } as any)
       .select()
       .single();
     if (error) {
