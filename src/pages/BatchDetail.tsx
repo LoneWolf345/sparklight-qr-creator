@@ -321,16 +321,16 @@ export default function BatchDetail() {
             <Table className="table-auto">
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-10">
+                  <TableHead className="w-10 px-2">
                     <Checkbox
                       checked={allFilteredSelected}
                       onCheckedChange={toggleSelectAll}
                       aria-label="Select all"
                     />
                   </TableHead>
-                  <TableHead>HomesPassedID</TableHead>
-                  <TableHead>Address</TableHead>
-                  {role && <TableHead className="text-right">Actions</TableHead>}
+                  <TableHead className="w-[140px] px-2">HomesPassedID</TableHead>
+                  <TableHead className="px-2">Address</TableHead>
+                  {role && <TableHead className="w-[60px] px-2 text-right">Actions</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
