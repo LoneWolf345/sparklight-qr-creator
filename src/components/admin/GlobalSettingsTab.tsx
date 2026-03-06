@@ -96,18 +96,6 @@ export function GlobalSettingsTab() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="base_url">Base URL (QR Payload Prefix)</Label>
-            <Input
-              id="base_url"
-              value={settings.base_url}
-              onChange={(e) => updateField("base_url", e.target.value)}
-              placeholder="https://go.sparklight.internal"
-            />
-            <p className="text-xs text-muted-foreground">
-              QR codes will encode: {settings.base_url}/HH/&#123;HomesPassedID&#125;
-            </p>
-          </div>
-          <div className="space-y-2">
             <Label htmlFor="dest_url">Default Destination URL</Label>
             <Input
               id="dest_url"
@@ -115,6 +103,9 @@ export function GlobalSettingsTab() {
               onChange={(e) => updateField("default_destination_url", e.target.value)}
               placeholder="https://www.sparklight.com/signup"
             />
+            <p className="text-xs text-muted-foreground">
+              QR codes will link directly to this URL with ?hpid=&#123;HomesPassedID&#125; appended.
+            </p>
           </div>
         </CardContent>
       </Card>

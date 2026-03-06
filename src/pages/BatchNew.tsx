@@ -263,12 +263,14 @@ export default function BatchNew() {
 
   const handleDownloadCsv = () => {
     const validRecords = mappedRecords.filter((r) => r.homesPassedId);
+    const destUrl = destinationOverride || settings.default_destination_url || "https://www.sparklight.com";
     const rows = [
       ["HomesPassedID", "Address", "QR_URL"],
-      ...validRecords.map((r) => [
-        r.homesPassedId,
-        r.address,
-        `${settings.base_url}/HH/${r.homesPassedId}`,
+      ...validRecords.map((r) => {
+        const u = new URL(destUrl);
+        u.searchParams.set("hpid", r.homesPassedId);
+        return [r.homesPassedId, r.address, u.toString()];
+      }),
       ]),
     ];
     const csv = rows.map((r) => r.map((c) => `"${c.replace(/"/g, '""')}"`).join(",")).join("\n");
