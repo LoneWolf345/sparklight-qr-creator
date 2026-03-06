@@ -8,12 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Plus, Trash2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Plus, Trash2, LogIn } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
 export default function Batches() {
-  const { role } = useAuth();
+  const { user, role } = useAuth();
   const [batches, setBatches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -51,6 +52,19 @@ export default function Batches() {
         )}
       </div>
 
+      {!user && (
+        <Alert className="mb-6">
+          <LogIn className="h-4 w-4" />
+          <AlertDescription>
+            To create new communities or manage QR batches,{" "}
+            <Link to="/login" className="font-medium text-primary underline underline-offset-4 hover:text-primary/80">
+              sign in
+            </Link>{" "}
+            with your team account.
+          </AlertDescription>
+        </Alert>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">All Communities</CardTitle>
@@ -60,10 +74,20 @@ export default function Batches() {
             <p className="text-muted-foreground text-sm">Loading…</p>
           ) : batches.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-muted-foreground mb-4">No communities yet.{role ? " Create your first community to get started." : ""}</p>
-              {role && (
+              <p className="text-muted-foreground mb-4">
+                {role
+                  ? "No communities yet. Create your first community to get started."
+                  : "No communities yet. Sign in with your team account to create one."}
+              </p>
+              {role ? (
                 <Button asChild variant="outline">
                   <Link to="/batches/new">Create Community</Link>
+                </Button>
+              ) : (
+                <Button asChild variant="outline">
+                  <Link to="/login">
+                    <LogIn className="mr-2 h-4 w-4" /> Sign In
+                  </Link>
                 </Button>
               )}
             </div>
