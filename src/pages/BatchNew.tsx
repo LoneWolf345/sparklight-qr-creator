@@ -12,6 +12,7 @@ import { parseFile, autoDetectMapping } from "@/lib/file-parser";
 import { mapAndValidate } from "@/lib/validation";
 import { generatePdf } from "@/lib/pdf-generator";
 import { toast } from "sonner";
+import { logAudit } from "@/lib/audit";
 import { ArrowLeft, ArrowRight, Loader2, Download } from "lucide-react";
 import sparklightLogo from "@/assets/sparklight-logo.png";
 import type { ParsedRow, ColumnMapping, MappedRecord, ValidationWarning } from "@/lib/batch-types";
