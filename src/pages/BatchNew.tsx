@@ -247,6 +247,7 @@ export default function BatchNew() {
         .eq("id", batch.id);
 
       toast.success(`Community generated: ${validRecords.length} QR codes`);
+      logAudit({ action: "create", entityType: "community", entityId: batch.id, entityName: batchName.trim(), details: { row_count: validRecords.length, city: city.trim(), state: state.trim(), market: market.trim() }, userId: user!.id });
     } catch (err: any) {
       toast.error("Generation failed: " + err.message);
     }

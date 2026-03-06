@@ -294,6 +294,9 @@ export default function BatchDetail() {
                     if (error) {
                       toast.error("Failed to delete: " + error.message);
                     } else {
+                      if (user) {
+                        logAudit({ action: "delete", entityType: "community", entityId: batch.id, entityName: batch.name, userId: user.id });
+                      }
                       toast.success(`"${batch.name}" deleted`);
                       navigate("/batches");
                     }
