@@ -40,6 +40,15 @@ export function FileUploadStep({
 }: FileUploadStepProps) {
   const [dragOver, setDragOver] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [cityOpen, setCityOpen] = useState(false);
+
+  const cityWarning = useMemo(() => {
+    if (!city || !state) return null;
+    if (!isCityInState(city, state)) {
+      return `"${city}" not found in ${state}. Please double-check the spelling.`;
+    }
+    return null;
+  }, [city, state]);
 
   const handleFile = useCallback(
     (file: File) => {
