@@ -1,6 +1,6 @@
 /** Shared type for the settings object from app_settings */
 export interface QrSettings {
-  base_url: string;
+  default_destination_url: string;
   qr_size_inches: number;
   primary_color: string;
   secondary_color: string;
